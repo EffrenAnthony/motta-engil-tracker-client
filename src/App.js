@@ -1,25 +1,56 @@
-import logo from './logo.svg';
-import './App.css';
+// import ReactDOM from "react-dom/client";
+import 'antd/dist/antd.min.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Login } from './pages/login'
+import { Principal } from './pages/principal'
+import { Editor } from './pages/editor'
+import { Usuarios } from './pages/usuarios'
+import { Configuracion } from './pages/configuracion'
+import { Layout } from './components/layout'
+import { UserProvider } from './context/loginContext'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <BrowserRouter>
+      <UserProvider>
+        <Routes>
+          <Route path="/login" element={<Login />}></Route>
+          <Route
+            path="/principal"
+            element={
+              <Layout>
+                <Principal />
+              </Layout>
+            }
+          ></Route>
+          <Route
+            path="/point-editor"
+            element={
+              <Layout>
+                <Editor />
+              </Layout>
+            }
+          ></Route>
+          <Route
+            path="/users"
+            element={
+              <Layout>
+                <Usuarios />
+              </Layout>
+            }
+          ></Route>
+          <Route
+            path="/configuration"
+            element={
+              <Layout>
+                <Configuracion />
+              </Layout>
+            }
+          ></Route>
+        </Routes>
+      </UserProvider>
+    </BrowserRouter>
+  )
 }
 
-export default App;
+export default App
