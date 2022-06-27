@@ -4,7 +4,7 @@ export const http = async (url, method, payload) => {
     method,
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + token.token,
+      Authorization: token ? 'Bearer ' + token.token : undefined,
     },
     body: payload ? JSON.stringify(payload) : undefined,
   }
