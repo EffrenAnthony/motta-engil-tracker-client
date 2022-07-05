@@ -40,7 +40,7 @@ function App() {
             }
           ></Route>
           <Route
-            path="/configuration"
+            path="/settings"
             element={
               <Layout>
                 <Configuracion />
