@@ -29,10 +29,18 @@ export const Principal = () => {
     />
   )
   // Map
-
+  // tabla
+  let records = []
+  for (let i = 0; i < 48; i++) {
+    records.push({
+      hora: '7:0' + i,
+      accion: 'Inicio de carguío ' + i,
+    })
+  }
+  // tabla fin
   return (
     <div className="w-full h-screen">
-      <div className="h-1/4">
+      <div className="w-full h-2/6">
         <h1 className="text-blue-500 text-3xl font-semibold px-5 py-5">
           Principal
         </h1>
@@ -98,15 +106,41 @@ export const Principal = () => {
               </span>
             </div>
           </div>
-          <div className="w-3/12 flex space-x-4 px-5 mt-5">
+          <div className="w-3/12 flex space-x-4 mt-5 mb-5">
             <Button type="primary" text="Buscar" />
             <Button type="warning" text="Reporte" />
           </div>
         </div>
       </div>
-      {/* Map */}
-      <div className="bg-blue-500 w-full h-3/4">
-        <MapView />
+      <div className="flex justify-between h-4/6">
+        <div className="w-3/12 overflow-y-scroll relative pb-8 pt-8">
+          <table className="table-auto w-full md:table-fixed  text-center border border-collapse border border-slate-500">
+            <thead className="border-solid border-solid">
+              <tr className="font-bold text-lg border-solid">
+                <th className="border border-slate-600">Hora</th>
+                <th className="border border-slate-600">Acción</th>
+              </tr>
+            </thead>
+            <tbody className="">
+              {records.map(record => {
+                return (
+                  <tr className="border-solid" key={record.hora}>
+                    <td className="border border-slate-700">{record.hora}</td>
+                    <td className="border border-slate-700">{record.accion}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+          {/* <div className="absolute bottom-0 right-0 left-0 bg-red-500">
+            <p>zxasdasdasdsa</p>
+          </div> */}
+        </div>
+        {/* Map absolute bottom-0 left-0*/}
+
+        <div className="w-9/12 h-6/6">
+          <MapView />
+        </div>
       </div>
     </div>
   )

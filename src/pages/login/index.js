@@ -25,8 +25,8 @@ export const Login = () => {
 
   return (
     <div className="w-full max-h-full md:max-h-screen">
-      <div className="flex max-h-full md:max-h-screen">
-        <div className="w-1/2 grid grid-rows-3 grid-flow-col gap-0">
+      <div className="flex max-h-full md:max-h-screen max-w-screen-2xl m-auto">
+        <div className="w-1/2 min-h-screen grid grid-rows-3 grid-flow-col gap-0">
           <img className="w-full h-full" src={IMG1} alt="" />
           <img className="w-full h-full" src={IMG3} alt="" />
           <img className="w-full h-full" src={IMG5} alt="" />
@@ -34,7 +34,7 @@ export const Login = () => {
           <img className="w-full h-full" src={IMG4} alt="" />
           <img className="w-full h-full" src={IMG6} alt="" />
         </div>
-        <div className="w-1/2 flex justify-center items-center">
+        <div className="w-1/2 min-h-screen flex justify-center items-center">
           <div className="w-3/5 h-4/6 flex  items-center flex-col rounded  shadow-lg shadow-blue-500/50 py-3 px-3 ">
             <img className="w-3/5 mb-5" src={LOGO} alt="" />
             <form className="w-11/12 mb-5" onSubmit={submit}>
