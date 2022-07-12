@@ -6,15 +6,20 @@ import { getMarkers } from '../../services/markers'
 
 import LocationMarker from './LocationMarker'
 
-const MarkerList = ({ markers }) => {
-  useEffect(() => {}, [markers])
+const MarkerList = ({ markers, getHistory }) => {
+  console.log('markersss', markers)
   return (
     <>
       {markers.length > 0 &&
         markers.map(marker => (
           <LocationMarker
+            onClick={() => getHistory(marker.userId)}
             key={marker._id}
-            position={[marker.latitude, marker.longitude]}
+            // position={[-16.4054894, -71.5626081]}
+            position={[
+              marker.latitude || -16.4054894,
+              marker.longitude || -71.5626081,
+            ]}
             description={marker?.user?.name}
             date={marker?.dls}
           />
@@ -34,7 +39,13 @@ const MarkerList = ({ markers }) => {
 // }
 
 function MapView() {
-  const { vehicles } = useVehicles()
+  const { vehicles, getHistory, history } = useVehicles()
+  const [vehicleSelected, setVehicleSelected] = useState(false)
+
+  const clickvehicle = userId => {
+    setVehicleSelected(true)
+    getHistory(userId)
+  }
   // useEffect(() => {
   //   const markerList = async () => {
   //     const markers = await getMarkers()
@@ -75,7 +86,11 @@ function MapView() {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <MarkerList markers={vehicles} />
+
+      <MarkerList
+        markers={vehicleSelected ? history : vehicles}
+        getHistory={clickvehicle}
+      />
     </MapContainer>
   )
 }

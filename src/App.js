@@ -8,6 +8,7 @@ import { Usuarios } from './pages/usuarios'
 import { Configuracion } from './pages/configuracion'
 import { Layout } from './components/layout'
 import { UserProvider } from './context/loginContext'
+import { UsersProvider } from './context/usersContext'
 
 function App() {
   return (
@@ -34,13 +35,15 @@ function App() {
           <Route
             path="/users"
             element={
-              <Layout>
-                <Usuarios />
-              </Layout>
+              <UsersProvider>
+                <Layout>
+                  <Usuarios />
+                </Layout>
+              </UsersProvider>
             }
           ></Route>
           <Route
-            path="/configuration"
+            path="/settings"
             element={
               <Layout>
                 <Configuracion />

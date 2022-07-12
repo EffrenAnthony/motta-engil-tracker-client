@@ -2,39 +2,40 @@ import { Input } from 'antd'
 import { Switch, Table } from 'antd'
 import { useState } from 'react'
 import ICONPASS from '../../assets/images/password.svg'
-import ICONEDIT from '../../assets/images/edit.svg'
-import ICONDELETE from '../../assets/images/delete.svg'
-import { ModalUser } from '../../common/Modal'
+import { ModalUser } from '../../common/ModalCreateUser'
 import { Button } from '../../common/Button'
-import { ConfirmModal } from '../../common/ConfirmModal'
+import { useUsers } from '../../context/usersContext'
+import { ModalDeleteUser } from '../../common/ModalDeleteUser'
+import { ModalEditUser } from '../../common/ModalEditUser'
+import { ModalEditPassword } from '../../common/ModalEditPassword'
 
 const { Search } = Input
 const columns = [
   {
     title: 'Nombre de usuario',
     width: 50,
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'user',
+    key: 'user',
     fixed: 'left',
   },
   {
     title: 'Fecha de creación',
-    width: 50,
-    dataIndex: 'age',
-    key: 'age',
+    width: 20,
+    dataIndex: 'createdAt',
+    key: 'createdAt',
     fixed: 'left',
+    render: date => {
+      return new Date(date).toLocaleDateString('en-US') || '-'
+    },
   },
   {
     title: 'Reestrablecer contraseña',
     key: 'operation',
     fixed: 'right',
-    width: 20,
+    width: 15,
     render: () => (
-      <div className="h-full w-5/12 m-auto flex items-center h-5">
-        <Button
-          text={<img className="w-5/12 m-auto h-5" src={ICONPASS} />}
-          type="primary"
-        />
+      <div className="w-5/12 m-auto flex items-center h-5">
+        <ModalEditPassword />
       </div>
     ),
   },
@@ -42,50 +43,39 @@ const columns = [
     title: 'Editar',
     key: 'operation',
     fixed: 'right',
-    width: 20,
-    render: () => (
-      <div className="h-full w-5/12 m-auto flex items-center h-5">
-        <Button
-          text={<img className="w-5/12 m-auto h-5" src={ICONEDIT} />}
-          type="warning"
-        />
-      </div>
-    ),
+    width: 15,
+    render: user => {
+      return (
+        <div className="w-5/12 m-auto flex items-center h-5">
+          <ModalEditUser {...user} />
+        </div>
+      )
+    },
   },
   {
     title: 'Eliminar usuario',
     key: 'operation',
     fixed: 'right',
-    width: 20,
-    render: () => (
-      <div className="h-full w-5/12 m-auto flex items-center h-5">
-        <Button
-          text={<img className="w-5/12 m-auto h-5" src={ICONDELETE} />}
-          type="danger"
-        />
-      </div>
-    ),
+    width: 15,
+    render: ({ _id, name }) => {
+      console.log('aqui', _id, name)
+      return (
+        <div className="w-5/12 m-auto flex items-center h-5">
+          <ModalDeleteUser userId={_id} userName={name} />
+        </div>
+      )
+    },
   },
 ]
-const data = []
-
-for (let i = 0; i < 100; i++) {
-  data.push({
-    key: i,
-    name: `Edrward ${i}`,
-    age: 2000 + i,
-    address: `London Park no. ${i}`,
-  })
-}
 
 export const Usuarios = () => {
   const [fixedTop, setFixedTop] = useState(false)
+  const { users } = useUsers()
   return (
     <div>
       <div className="flex px-5 py-5 justify-between">
         <h1 className="text-blue-500 text-3xl font-semibold ">Usuarios</h1>
-        <ModalUser></ModalUser>
-        <ConfirmModal />
+        <ModalUser />
       </div>
       <div className="px-5">
         <div className="flex justify-between">
@@ -99,7 +89,7 @@ export const Usuarios = () => {
         <div className="mt-5">
           <Table
             columns={columns}
-            dataSource={data}
+            dataSource={users}
             scroll={{
               x: 1500,
             }}
