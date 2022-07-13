@@ -88,16 +88,16 @@ export const Layout = ({ children }) => {
               </span>
             </div>
           </Link>
-          <Link to="/loads">
+          <Link to="/settings">
             <div
               className={`px-3 py-5 flex border-b-yellow-600 cursor-pointer border-b mb-16 ${
-                pathname == '/loads' ? 'border-l-yellow-600 border-l-4' : ''
+                pathname == '/settings' ? 'border-l-yellow-600 border-l-4' : ''
               }`}
             >
               <img className="mr-2" src={SETTINGS} alt="" />
               <span
                 className={
-                  pathname == '/loads' ? 'text-yellow-600' : 'text-white'
+                  pathname == '/settings' ? 'text-yellow-600' : 'text-white'
                 }
               >
                 Configuraciones

@@ -9,6 +9,7 @@ import { Configuracion } from './pages/configuracion'
 import { Layout } from './components/layout'
 import { UserProvider } from './context/loginContext'
 import { UsersProvider } from './context/usersContext'
+import { LocationsProvider } from './context/locationsContext'
 
 function App() {
   return (
@@ -19,9 +20,11 @@ function App() {
           <Route
             path="/principal"
             element={
-              <Layout>
-                <Principal />
-              </Layout>
+              <LocationsProvider>
+                <Layout>
+                  <Principal />
+                </Layout>
+              </LocationsProvider>
             }
           ></Route>
           <Route

@@ -7,12 +7,16 @@ import MapView from '../../components/Map/MapView'
 import DatePicker from 'react-datepicker'
 import 'leaflet/dist/leaflet.css'
 import 'react-datepicker/dist/react-datepicker.css'
+import { useLocations } from '../../context/locationsContext'
 
 const { Option } = Select
 
 export const Principal = () => {
   const [startDate, setStartDate] = useState(new Date())
   const [endDate, setEndDate] = useState(new Date())
+
+  const { history, vehicleSelected } = useLocations()
+
   const options = [
     {
       label: 'V5F-655',
@@ -38,14 +42,7 @@ export const Principal = () => {
   )
   // Map
   // tabla
-  let records = []
-  for (let i = 0; i < 60; i++) {
-    records.push({
-      hora: '7:0' + i,
-      accion: 'Inicio de carguío ' + i,
-    })
-  }
-  // tabla fin
+
   return (
     <div className="w-full h-screen flex flex-col">
       <div className="py-4">
@@ -145,31 +142,43 @@ export const Principal = () => {
         </div>
       </div>
       <div className="flex justify-between grow overflow-hidden relative border-t border-gray-200">
-        <div className="w-3/12 h-full relative pb-8 flex flex-col">
-          <div className="grow overflow-y-auto mb-6 max-h-full">
-            <table className="table-auto w-full md:table-fixed text-center border-collapse  ">
-              <thead className="sticky top-0 bg-white border-b">
-                <tr className="font-bold text-lg divide-x">
-                  <th className="">Hora</th>
-                  <th className="">Acción</th>
-                </tr>
-              </thead>
-              <tbody className=" divide-y">
-                {records.map(record => {
-                  return (
-                    <tr className="divide-x" key={record.hora}>
-                      <td className="">{record.hora}</td>
-                      <td className="">{record.accion}</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+        {vehicleSelected && (
+          <div className="w-3/12 h-full relative pb-8 flex flex-col">
+            <div className="grow overflow-y-auto mb-6 max-h-full">
+              <table className="table-auto w-full md:table-fixed text-center border-collapse  ">
+                <thead className="sticky top-0 bg-white border-b">
+                  <tr className="font-bold text-lg divide-x">
+                    <th className="">Hora</th>
+                    <th className="">Acción</th>
+                  </tr>
+                </thead>
+                <tbody className=" divide-y border-b">
+                  {history.map(record => {
+                    const time = new Date(record.createdAt)
+                    return (
+                      <tr className="divide-x" key={record._id}>
+                        <td className="">
+                          {`${time.getHours()}:${time.getMinutes()}`}
+                        </td>
+                        <td className="center">
+                          {record.data ? record.data.topic : ''}
+                          {record?.data?.material && (
+                            <div className="border-t">
+                              {record.data.material}
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="absolute w-full bottom-0 left-0 bg-red-500 h-14">
+              <p>&nbsp;</p>
+            </div>
           </div>
-          <div className="absolute w-full bottom-0 left-0 bg-red-500 h-14">
-            <p>zxasdasdasdsa</p>
-          </div>
-        </div>
+        )}
         {/* Map */}
         <div className="bg-blue-500 w-full">
           <MapView />

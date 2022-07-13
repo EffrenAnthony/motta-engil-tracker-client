@@ -1,13 +1,10 @@
-import { useEffect, useState } from 'react'
 import { MapContainer, TileLayer } from 'react-leaflet'
-import { http } from '../../helpers/http'
-import { useVehicles } from '../../hooks/useVehicles'
-import { getMarkers } from '../../services/markers'
+import { useLocations } from '../../context/locationsContext'
 
 import LocationMarker from './LocationMarker'
 
-const MarkerList = ({ markers, getHistory }) => {
-  console.log('markersss', markers)
+const MarkerList = ({ markers, getHistory, isHistory }) => {
+  console.log('markers', markers)
   return (
     <>
       {markers.length > 0 &&
@@ -22,6 +19,7 @@ const MarkerList = ({ markers, getHistory }) => {
             ]}
             description={marker?.user?.name}
             date={marker?.dls}
+            isHistory={isHistory}
           />
         ))}
     </>
@@ -39,11 +37,11 @@ const MarkerList = ({ markers, getHistory }) => {
 // }
 
 function MapView() {
-  const { vehicles, getHistory, history } = useVehicles()
-  const [vehicleSelected, setVehicleSelected] = useState(false)
+  const { vehicles, getHistory, history, pickVehicle, vehicleSelected } =
+    useLocations()
 
   const clickvehicle = userId => {
-    setVehicleSelected(true)
+    pickVehicle(true)
     getHistory(userId)
   }
   // useEffect(() => {
@@ -74,14 +72,18 @@ function MapView() {
   //     socket.off('tracker', connection)
   //   }
   // }, [socket, vehicles])
-  console.log(vehicles)
 
+  const center = [
+    vehicles[vehicles.length - 1]
+      ? vehicles[vehicles.length - 1].latitude
+      : -16.39889,
+    vehicles[vehicles.length - 1]
+      ? vehicles[vehicles.length - 1].longitude
+      : -71.535,
+  ]
+  console.log('centro', center)
   return (
-    <MapContainer
-      center={[-16.39889, -71.535]}
-      zoom={13}
-      scrollWheelZoom={false}
-    >
+    <MapContainer center={center} zoom={7} scrollWheelZoom={false}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -90,6 +92,7 @@ function MapView() {
       <MarkerList
         markers={vehicleSelected ? history : vehicles}
         getHistory={clickvehicle}
+        isHistory={vehicleSelected}
       />
     </MapContainer>
   )

@@ -6,6 +6,7 @@ import { Button } from '../../common/Button'
 // tabla
 import { Form, Popconfirm } from 'antd'
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import { useLoads } from '../../context/loadsContext'
 
 //Fin tabla
 export const Configuracion = () => {
@@ -21,6 +22,7 @@ export const Configuracion = () => {
       </Form>
     )
   }
+  // const { loads } = useLoads()
 
   const EditableCell = ({
     title,
@@ -178,7 +180,7 @@ export const Configuracion = () => {
           Configuracion
         </h1>
       </div>
-      <div className="flex justify-between w-12/12 mb-5">
+      {/* <div className="flex justify-between w-12/12 mb-5">
         <div className=" w-6/12">
           <div className="w-8/12 px-5">
             <h2>Carga por horas</h2>
@@ -201,7 +203,7 @@ export const Configuracion = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
       <div className="flex justify-between w-12/12 mt-5">
         <div className=" w-6/12">
           <div className="w-9/12 px-5">

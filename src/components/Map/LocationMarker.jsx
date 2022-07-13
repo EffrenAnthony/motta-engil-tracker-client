@@ -1,13 +1,19 @@
 import React from 'react'
 import { Marker, Popup } from 'react-leaflet'
-import IconLocaiton from './IconLocaiton'
+import { IconVehicle, IconPoint } from './IconVehicle'
 import moment from 'moment'
 
-const LocationMarker = ({ position, description, date, onClick }) => {
+const LocationMarker = ({
+  position,
+  description,
+  date,
+  onClick,
+  isHistory,
+}) => {
   return (
     <Marker
       position={position}
-      icon={IconLocaiton}
+      icon={isHistory ? IconPoint : IconVehicle}
       eventHandlers={{
         click: () => {
           onClick()
