@@ -1,7 +1,5 @@
 import { Input } from 'antd'
-import { Switch, Table } from 'antd'
-import { useState } from 'react'
-import ICONPASS from '../../assets/images/password.svg'
+import { Table } from 'antd'
 import { ModalUser } from '../../common/ModalCreateUser'
 import { Button } from '../../common/Button'
 import { useUsers } from '../../context/usersContext'
@@ -13,14 +11,14 @@ const { Search } = Input
 const columns = [
   {
     title: 'Nombre de usuario',
-    width: 50,
+    width: 40,
     dataIndex: 'user',
     key: 'user',
     fixed: 'left',
   },
   {
     title: 'Fecha de creación',
-    width: 20,
+    width: 25,
     dataIndex: 'createdAt',
     key: 'createdAt',
     fixed: 'left',
@@ -29,10 +27,10 @@ const columns = [
     },
   },
   {
-    title: 'Reestrablecer contraseña',
+    title: 'Restablecer contraseña',
     key: 'operation',
     fixed: 'right',
-    width: 15,
+    width: 20,
     render: () => (
       <div className="w-5/12 m-auto flex items-center h-5">
         <ModalEditPassword />
@@ -69,7 +67,6 @@ const columns = [
 ]
 
 export const Usuarios = () => {
-  const [fixedTop, setFixedTop] = useState(false)
   const { users } = useUsers()
   return (
     <div>
@@ -90,20 +87,9 @@ export const Usuarios = () => {
           <Table
             columns={columns}
             dataSource={users}
-            scroll={{
-              x: 1500,
+            pagination={{
+              hideOnSinglePage: true,
             }}
-            summary={() => (
-              <Table.Summary fixed={fixedTop ? 'top' : 'bottom'}>
-                {/* <Table.Summary.Row>
-                  <Table.Summary.Cell
-                    index={0}
-                    colSpan={2}
-                  ></Table.Summary.Cell>
-                </Table.Summary.Row> */}
-              </Table.Summary>
-            )}
-            sticky
           />
         </div>
       </div>

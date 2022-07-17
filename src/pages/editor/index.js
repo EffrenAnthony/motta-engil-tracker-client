@@ -1,117 +1,100 @@
-import { Dropdown, Menu, Space, Popconfirm, Form } from 'antd'
-import { DownOutlined } from '@ant-design/icons'
+import { Select, Menu, Popconfirm } from 'antd'
+import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet'
 import { Input } from '../../common/Input'
 import { Table } from 'antd'
 import { Button } from '../../common/Button'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useRef, useState, useCallback } from 'react'
+import { HexColorPicker } from 'react-colorful'
+import useClickOutside from './../../hooks/useClickOutside'
+
+const { Option } = Select
+const linesData = [
+  {
+    lat1: -12.088125890009097,
+    lon1: -77.03389217854566,
+    lat2: -12.092280270662577,
+    lon2: -77.03335573679237,
+  },
+  {
+    lat1: -12.092280270662577,
+    lon1: -77.03335573679237,
+    lat2: -12.09263695690265,
+    lon2: -77.0361774204146,
+  },
+  {
+    lat1: -12.09263695690265,
+    lon1: -77.0361774204146,
+    lat2: -12.08895467311964,
+    lon2: -77.03672459100294,
+  },
+  {
+    lat1: -12.08895467311964,
+    lon1: -77.03672459100294,
+    lat2: -12.089195963922396,
+    lon2: -77.03335573679237,
+  },
+  {
+    lat1: -12.089195963922396,
+    lon1: -77.03335573679237,
+    lat2: -12.089195963922396,
+    lon2: -77.03952481695502,
+  },
+  {
+    lat1: -12.089195963922396,
+    lon1: -77.03952481695502,
+    lat2: -12.087716742955145,
+    lon2: -77.04438497939576,
+  },
+]
+const lines = [
+  [-12.088125890009097, -77.03389217854566],
+  [-12.092280270662577, -77.03335573679237],
+  [-12.09263695690265, -77.0361774204146],
+  [-12.08895467311964, -77.03672459100294],
+  [-12.089195963922396, -77.03952481695502],
+  [-12.087716742955145, -77.04438497939576],
+]
+
+const MarkerList = ({ markers }) => {
+  return (
+    <>
+      {markers.length > 0 &&
+        markers.map(marker => (
+          <Marker
+            key={marker}
+            position={position}
+            icon={isHistory ? IconPoint : IconVehicle}
+            eventHandlers={{
+              click: () => {
+                onClick()
+              },
+            }}
+          />
+        ))}
+    </>
+  )
+}
 
 export const Editor = () => {
-  const menu = (
-    <Menu
-      items={[
-        {
-          label: <a href="#">Punto</a>,
-          key: '0',
-        },
-        {
-          label: <a href="#">Linea</a>,
-          key: '1',
-        },
-      ]}
-    />
-  )
+  const [option, setOption] = useState(0)
+  const [isOpen, toggle] = useState(false)
+  const [color, setColor] = useState('#434343')
+  const popover = useRef()
+  const close = useCallback(() => toggle(false), [])
+
+  useClickOutside(popover, close)
 
   //Tabla
-  const EditableContext = React.createContext(null)
-  const EditableRow = ({ index, ...props }) => {
-    const [form] = Form.useForm()
-    return (
-      <Form form={form} component={false}>
-        <EditableContext.Provider value={form}>
-          <tr {...props} />
-        </EditableContext.Provider>
-      </Form>
-    )
-  }
-
-  const EditableCell = ({
-    title,
-    editable,
-    children,
-    dataIndex,
-    record,
-    handleSave,
-    ...restProps
-  }) => {
-    const [editing, setEditing] = useState(false)
-    const inputRef = useRef(null)
-    const form = useContext(EditableContext)
-    useEffect(() => {
-      if (editing) {
-        inputRef.current.focus()
-      }
-    }, [editing])
-
-    const toggleEdit = () => {
-      setEditing(!editing)
-      form.setFieldsValue({
-        [dataIndex]: record[dataIndex],
-      })
-    }
-
-    const save = async () => {
-      try {
-        const values = await form.validateFields()
-        toggleEdit()
-        handleSave({ ...record, ...values })
-      } catch (errInfo) {
-        console.log('Save failed:', errInfo)
-      }
-    }
-
-    let childNode = children
-
-    if (editable) {
-      childNode = editing ? (
-        <Form.Item
-          style={{
-            margin: 0,
-          }}
-          name={dataIndex}
-          rules={[
-            {
-              required: true,
-              message: `${title} is required.`,
-            },
-          ]}
-        >
-          <Input ref={inputRef} onPressEnter={save} onBlur={save} />
-        </Form.Item>
-      ) : (
-        <div
-          className="editable-cell-value-wrap"
-          style={{
-            paddingRight: 24,
-          }}
-          onClick={toggleEdit}
-        >
-          {children}
-        </div>
-      )
-    }
-
-    return <td {...restProps}>{childNode}</td>
-  }
 
   //config tabla
   const [dataSource, setDataSource] = useState([
     {
       key: '0',
-      material: 'Edward King 0',
+      material: '-17.9344',
     },
     {
       key: '1',
-      material: 'Edward King 1',
+      material: '-16.1223',
     },
   ])
   const [count, setCount] = useState(2)
@@ -121,43 +104,38 @@ export const Editor = () => {
     setDataSource(newData)
   }
 
-  const defaultColumns = [
+  const columns = [
     {
       title: 'Latitud',
       dataIndex: 'material',
       width: '30%',
-      editable: false,
     },
     {
       title: 'Latitud',
       dataIndex: 'material',
       width: '30%',
-      editable: false,
     },
     {
       title: 'Longitud',
       dataIndex: 'material',
       width: '30%',
-      editable: false,
     },
     {
       title: 'Longitud',
       dataIndex: 'material',
       width: '30%',
-      editable: false,
     },
     {
       title: 'Acción',
       dataIndex: 'operation',
-      render: (_, record) =>
-        dataSource.length >= 1 ? (
-          <Popconfirm
-            title="Seguro que desea eliminar el material?"
-            onConfirm={() => handleDelete(record.key)}
-          >
-            <a>Delete</a>
-          </Popconfirm>
-        ) : null,
+      render: (_, record) => (
+        <Popconfirm
+          title="Seguro que desea eliminar el material?"
+          onConfirm={() => handleDelete(record.key)}
+        >
+          <a>Delete</a>
+        </Popconfirm>
+      ),
     },
   ]
 
@@ -178,103 +156,75 @@ export const Editor = () => {
     setDataSource(newData)
   }
 
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell,
-    },
-  }
-  const columns = defaultColumns.map(col => {
-    if (!col.editable) {
-      return col
-    }
-
-    return {
-      ...col,
-      onCell: record => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        handleSave,
-      }),
-    }
-  })
-
-  // const columns = [
-  //   {
-  //     title: 'Punto',
-  //     dataIndex: 'name',
-  //     width: 150,
-  //   },
-  //   {
-  //     title: 'Latitud',
-  //     dataIndex: 'age',
-  //     width: 150,
-  //   },
-  //   {
-  //     title: 'Longitud',
-  //     dataIndex: 'address',
-  //   },
-  // ]
-  // const data = []
-
-  // for (let i = 0; i < 100; i++) {
-  //   data.push({
-  //     key: i,
-  //     name: `prueba ${i}`,
-  //     age: `-16,2532674${i}`,
-  //     address: `-71,6822174${i}`,
-  //   })
-  // }
   return (
-    <div>
+    <div className="w-full h-screen flex flex-col">
       <div className="flex justify-start items-center content-center">
         <h1 className="text-blue-500 text-3xl font-semibold px-5 py-5">
-          Editor de puntos y lineas
+          Puntos en el mapa
         </h1>
         <div className="w-5/12">
           <span className="mr-4 text-sl font-semibold">Tipo</span>
-          <span className="border border-blue-500 rounded px-2 py-1">
-            <Dropdown overlay={menu} trigger={['click']}>
-              <Space>
-                Selecciona una opción
-                <DownOutlined />
-              </Space>
-            </Dropdown>
-          </span>
+          <div className="border inline-block border-blue-500 rounded">
+            <Select defaultValue="0" onChange={key => setOption(key)}>
+              <Option value="0">Punto</Option>
+              <Option value="1">Linea</Option>
+            </Select>
+          </div>
         </div>
       </div>
-      <div className="flex justify-between w-12/12">
-        <div className=" w-6/12">
-          <div className="flex justify-between w-12/12 px-5">
-            <div className="w-full mr-5">
-              <label>Latitud</label>
-              <Input type="text" placeholder="Escribe latitud" />
-              <label>Longitud</label>
-              <Input placeholder="Escribe longitud" />
-            </div>
-            <div className="w-full">
+      <div className="flex">
+        <div className="w-6/12">
+          <div className="flex justify-around">
+            <div className="w-5/12">
               <label>Nombre</label>
               <Input placeholder="Escribe nombre" />
+            </div>
+            <div className="w-5/12">
               <label>Ícono</label>
-              <Input />
+              <div>
+                <div className="picker">
+                  <div
+                    className="swatch"
+                    style={{ backgroundColor: color }}
+                    onClick={() => toggle(true)}
+                  />
+
+                  {isOpen && (
+                    <div className="popover z-10" ref={popover}>
+                      <HexColorPicker
+                        color={color}
+                        onChange={color => {
+                          setColor(color)
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-          <div className="flex justify-between w-12/12 px-5">
-            <div className="w-full mr-5">
+          <div className="flex justify-around">
+            <div className="w-5/12">
               <label>Latitud</label>
               <Input type="text" placeholder="Escribe latitud" />
-              <label>Longitud</label>
-              <Input placeholder="Escribe longitud" />
             </div>
-            <div className="w-full">
-              <label>Latitud</label>
-              <Input placeholder="Escribe latitud" />
+            <div className="w-5/12">
               <label>Longitud</label>
               <Input placeholder="Escribe longitud" />
             </div>
           </div>
+          {option == 1 && (
+            <div className="flex justify-around">
+              <div className="w-5/12">
+                <label>Latitud</label>
+                <Input type="text" placeholder="Escribe latitud" />
+              </div>
+              <div className="w-5/12">
+                <label>Longitud</label>
+                <Input placeholder="Escribe longitud" />
+              </div>
+            </div>
+          )}
           <div className="flex justify-between px-5">
             <div className="w-4/12 mr-5">
               <Button
@@ -296,12 +246,29 @@ export const Editor = () => {
         </div>
         <div className="w-6/12 shadow-lg shadow-blue-500/50  rounded mr-5">
           <Table
-            components={components}
-            // rowClassName={() => 'editable-row'}
+            rowClassName={(_, index) =>
+              index % 2 === 0 ? 'py-2' : 'bg-gray-100 py-2'
+            }
             bordered
             dataSource={dataSource}
             columns={columns}
+            pagination={false}
           />
+        </div>
+      </div>
+      <div className="flex grow relative border-t border-gray-200 w-full">
+        <div className="bg-blue-500 w-full">
+          <MapContainer
+            center={[-12.08887074583288, -77.03522255409378]}
+            zoom={15}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <MarkerList markers={[]} />
+            <Polyline positions={lines} pathOptions={{ color: 'green' }} />
+          </MapContainer>
         </div>
       </div>
     </div>

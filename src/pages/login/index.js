@@ -9,7 +9,7 @@ import LOGO from '../../assets/images/logoLogin.png'
 import ICONFORM from '../../assets/images/icon-form.svg'
 import { Button } from '../../common/Button'
 import { Input } from '../../common/Input'
-import { useCurrentUser } from '../../context/loginContext'
+import { useCurrentUser } from '../../context/authContext'
 
 export const Login = () => {
   const [state, setState] = useState({

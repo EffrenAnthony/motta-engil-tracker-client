@@ -1,15 +1,14 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { http } from '../helpers/http'
 import { useNavigate } from 'react-router-dom'
+import { getToken } from '../helpers/token'
 
-const UserContext = createContext(null)
-export const useCurrentUser = () => useContext(UserContext)
+const AuthContext = createContext(null)
+export const useCurrentUser = () => useContext(AuthContext)
 
-export const UserProvider = ({ children }) => {
-  const local = localStorage.getItem('userInfo')
-  const [userInfo, setUserInfo] = useState(
-    local ? JSON.parse(local) : undefined
-  )
+export const AuthProvider = ({ children }) => {
+  const local = getToken()
+  const [userInfo, setUserInfo] = useState(local)
   let navigate = useNavigate()
 
   const login = async data => {
@@ -36,8 +35,8 @@ export const UserProvider = ({ children }) => {
   }
 
   return (
-    <UserContext.Provider value={{ userInfo, login, logout }}>
+    <AuthContext.Provider value={{ userInfo, login, logout }}>
       {children}
-    </UserContext.Provider>
+    </AuthContext.Provider>
   )
 }

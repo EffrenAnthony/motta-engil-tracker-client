@@ -7,7 +7,7 @@ import CLOSE from '../assets/images/cerrar-sesion-icon.svg'
 import { Modal } from 'antd'
 import { useState } from 'react'
 import { Button } from '../common/Button'
-import { useCurrentUser } from '../context/loginContext'
+import { useCurrentUser } from '../context/authContext'
 import { useLocation } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 

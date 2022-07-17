@@ -1,7 +1,6 @@
 import { Modal, message } from 'antd'
 import { useState, useRef, useCallback } from 'react'
-import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons'
-import { Input, Space, Form } from 'antd'
+import { Input, Form } from 'antd'
 import { Button } from '../Button'
 import { useUsers } from '../../context/usersContext'
 import ICONEDIT from '../../assets/images/edit.svg'
@@ -32,15 +31,6 @@ export const ModalEditUser = ({ name, email, color, _id }) => {
   const showModal = () => {
     setVisible(true)
   }
-
-  // const handleOk = () => {
-  //   setModalText('The modal will be closed after two seconds')
-  //   setConfirmLoading(true)
-  //   setTimeout(() => {
-  //     setVisible(false)
-  //     setConfirmLoading(false)
-  //   }, 2000)
-  // }
 
   const handleCancel = () => {
     console.log('Clicked cancel button')

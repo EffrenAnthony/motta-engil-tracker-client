@@ -21,12 +21,13 @@ module.exports = {
       black: '#000000',
       gray: {
         200: '#D6D6D6',
+        100: '#F4F4F4',
       },
     },
     extend: {
       zIndex: {
-        '1000': '1000',
-      }
+        1000: '1000',
+      },
     },
   },
   plugins: [],

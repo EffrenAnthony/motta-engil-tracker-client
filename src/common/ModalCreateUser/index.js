@@ -31,15 +31,6 @@ export const ModalUser = () => {
     setVisible(true)
   }
 
-  // const handleOk = () => {
-  //   setModalText('The modal will be closed after two seconds')
-  //   setConfirmLoading(true)
-  //   setTimeout(() => {
-  //     setVisible(false)
-  //     setConfirmLoading(false)
-  //   }, 2000)
-  // }
-
   const handleCancel = () => {
     console.log('Clicked cancel button')
     setVisible(false)
@@ -48,7 +39,6 @@ export const ModalUser = () => {
 
   const submit = async () => {
     setConfirmLoading(true)
-
     if (
       user.name != '' &&
       user.email != '' &&
@@ -64,7 +54,6 @@ export const ModalUser = () => {
           email: user.email,
           color: user.color,
         })
-
         setVisible(false)
         setConfirmLoading(false)
         setUser({
@@ -86,18 +75,16 @@ export const ModalUser = () => {
   //Fin
   return (
     <>
-      <div className="w-1/12">
+      <div>
         <Button type="secondary" text="Crear Usuario" onClick={showModal} />
       </div>
       <Modal
-        // title="Usuarios"
         visible={visible}
-        onOk={form.submit}
         confirmLoading={confirmLoading}
+        footer={null}
+        closable={true}
         onCancel={handleCancel}
       >
-        {/* <p>{modalText}</p> */}
-
         <h2 className="text-blue-500 text-3xl font-semibold">Usuarios</h2>
         <Form form={form} onFinish={submit}>
           <p className="text-blue-500 font-semibold">Crear usuario</p>
@@ -167,7 +154,7 @@ export const ModalUser = () => {
                 />
 
                 {isOpen && (
-                  <div className="popover" ref={popover}>
+                  <div className="popover z-10" ref={popover}>
                     <HexColorPicker
                       color={user.color}
                       onChange={color => setUser({ ...user, color })}
@@ -176,6 +163,10 @@ export const ModalUser = () => {
                 )}
               </div>
             </div>
+          </div>
+          <div className="flex flow-row gap-2 mt-4">
+            <Button text="Si" type="primary" htmlType="submit" />
+            <Button text="No" type="warning" onClick={handleCancel} />
           </div>
         </Form>
       </Modal>
