@@ -10,11 +10,14 @@ import { Layout } from './components/layout'
 import { UserProvider } from './context/loginContext'
 import { UsersProvider } from './context/usersContext'
 import { LocationsProvider } from './context/locationsContext'
+import { LoadProvider } from './context/loadsContext'
+
 
 function App() {
   return (
     <BrowserRouter>
       <UserProvider>
+      <UsersProvider>
         <Routes>
           <Route path="/login" element={<Login />}></Route>
           <Route
@@ -38,22 +41,24 @@ function App() {
           <Route
             path="/users"
             element={
-              <UsersProvider>
+              
                 <Layout>
                   <Usuarios />
                 </Layout>
-              </UsersProvider>
             }
           ></Route>
           <Route
             path="/settings"
             element={
+              <LoadProvider>
               <Layout>
                 <Configuracion />
               </Layout>
+              </LoadProvider>
             }
           ></Route>
         </Routes>
+        </UsersProvider>
       </UserProvider>
     </BrowserRouter>
   )

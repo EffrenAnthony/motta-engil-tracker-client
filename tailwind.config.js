@@ -23,7 +23,11 @@ module.exports = {
         200: '#D6D6D6',
       },
     },
-    extend: {},
+    extend: {
+      zIndex: {
+        '1000': '1000',
+      }
+    },
   },
   plugins: [],
 }

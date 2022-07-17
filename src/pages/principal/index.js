@@ -8,25 +8,35 @@ import DatePicker from 'react-datepicker'
 import 'leaflet/dist/leaflet.css'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useLocations } from '../../context/locationsContext'
+import ICONPLAY from '../../assets/images/play.png'
+import ICONARROWLEFT from '../../assets/images/arrow-left.png'
+import ICONARROWRIGHT from '../../assets/images/arrow-right.png'
+import ICONARROWTOP from '../../assets/images/arrow-top.png'
+import ICONARROWBOTTOM from '../../assets/images/arrow-bottom.png'
+import { useUsers } from '../../context/usersContext'
 
 const { Option } = Select
 
 export const Principal = () => {
   const [startDate, setStartDate] = useState(new Date())
   const [endDate, setEndDate] = useState(new Date())
+  const [showFilters, setShowfilters] = useState(true)
+  const { users } = useUsers()
+  console.log(users)
 
   const { history, vehicleSelected } = useLocations()
-
-  const options = [
-    {
-      label: 'V5F-655',
-      key: '0',
-    },
-    {
-      label: 'V5F-665',
-      key: '1',
-    },
-  ]
+  const hours = ['00:00','00:30','01:00','01:30','02:00','02:30','03:00','03:30','04:00','04:30','05:00','05:30','06:00','06:30','07:00','07:30','08:00', '08:30', '09:00', '09:30','10:00','10:30','11:00','11:30','12:00', '12:30', '13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30','21:00', '21:30', '22:00', '22:30','23:00','23:30','24:00']
+  const options = users.map((user)=>{
+    return (
+      {
+          label: user.name,
+          key: user._id
+      }
+    )
+  })
+  const showFilter = ()=>{
+    setShowfilters(!showFilters)
+  }
   const menu = (
     <Menu
       items={[
@@ -49,97 +59,101 @@ export const Principal = () => {
         <h1 className="text-blue-500 text-3xl font-semibold px-5 py-2">
           Principal
         </h1>
-        <div className="px-5">
-          <div className="w-72 mb-2">
-            <span className="mr-4 text-sm font-semibold">Vehículo</span>
-            <Select
-              showSearch
-              placeholder="Seleccione un vehículo"
-              onSearch={e => console.log('eee', e)}
-              // filterOption={(input, option) =>
-              //   option.children.toLowerCase().includes(input.toLowerCase())
-              // }
-              className="border border-blue-500 rounded px-2 py-1"
-            >
-              {options.map(option => (
-                <Option key={option.key} value={option.label}>
-                  {option.label}
-                </Option>
-              ))}
-            </Select>
-          </div>
-          <div className="flex space-x-4">
-            <div>
-              <p className="mr-4 mb-1 text-sl font-semibold text-block">
-                Fecha inicio
-              </p>
-              <span className="border block border-blue-500 rounded px-2 py-1 w-full">
-                <DatePicker
-                  selected={startDate}
-                  onChange={date => setStartDate(date)}
-                />
-              </span>
-            </div>
-            <div className="">
-              <p className="mr-4 mb-1 text-sl font-semibold text-block">
-                Fecha fin
-              </p>
-              <span className="border block border-blue-500 rounded px-2 py-1 w-full">
-                <DatePicker
-                  selected={endDate}
-                  onChange={date => setEndDate(date)}
-                />
-              </span>
-            </div>
-            <div className="">
-              <p className="mr-4 mb-1 text-sl font-semibold text-block">
-                Hora inicio
-              </p>
-              <Select
-                // showSearch
-                defaultValue="07:00"
-                // filterOption={(input, option) =>
-                //   option.children.toLowerCase().includes(input.toLowerCase())
-                // }
-                className="border border-blue-500 rounded px-2 py-1"
-              >
-                {['07:00', '07:30', '08:00', '08:30', '09:00', '09:30'].map(
-                  hour => (
-                    <Option key={hour} value={hour}>
-                      {hour}
-                    </Option>
-                  )
-                )}
-              </Select>
-            </div>
-            <div className="">
-              <p className="mr-4 mb-1 text-sl font-semibold text-block">
-                Hora fin
-              </p>
-              <Select
-                // showSearch
-                onSearch={e => console.log('eee', e)}
-                defaultValue="07:00"
-                // filterOption={(input, option) =>
-                //   option.children.toLowerCase().includes(input.toLowerCase())
-                // }
-                className="border border-blue-500 rounded px-2 py-1"
-              >
-                {['07:00', '07:30', '08:00', '08:30', '09:00', '09:30'].map(
-                  hour => (
-                    <Option key={hour} value={hour}>
-                      {hour}
-                    </Option>
-                  )
-                )}
-              </Select>
-            </div>
-          </div>
-          <div className="w-3/12 flex space-x-4 mt-5">
-            <Button type="primary" text="Buscar" />
-            <Button type="warning" text="Reporte" />
-          </div>
-        </div>
+        {showFilters && (
+                  <div className="px-5">
+                  <div className="w-72 mb-2">
+                    <span className="mr-4 text-sm font-semibold">Usuario</span>
+                    <Select
+                      showSearch
+                      placeholder="Seleccione un vehículo"
+                      onSearch={e => console.log('eee', e)}
+                      // filterOption={(input, option) =>
+                      //   option.children.toLowerCase().includes(input.toLowerCase())
+                      // }
+                      className="border border-blue-500 rounded px-2 py-1"
+                    >
+                      {options.map(option => (
+                        <Option key={option.key} value={option.label}>
+                          {option.label}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="flex space-x-4">
+                    <div>
+                      <p className="mr-4 mb-1 text-sl font-semibold text-block">
+                        Fecha inicio
+                      </p>
+                      <span className="border block border-blue-500 rounded px-2 py-1 w-full">
+                        <DatePicker
+                          selected={startDate}
+                          onChange={date => setStartDate(date)}
+                        />
+                      </span>
+                    </div>
+                    <div className="">
+                      <p className="mr-4 mb-1 text-sl font-semibold text-block">
+                        Fecha fin
+                      </p>
+                      <span className="border block border-blue-500 rounded px-2 py-1 w-full">
+                        <DatePicker
+                          selected={endDate}
+                          onChange={date => setEndDate(date)}
+                        />
+                      </span>
+                    </div>
+                    <div className="">
+                      <p className="mr-4 mb-1 text-sl font-semibold text-block">
+                        Hora inicio
+                      </p>
+                      <Select
+                        // showSearch
+                        defaultValue="07:00"
+                        // filterOption={(input, option) =>
+                        //   option.children.toLowerCase().includes(input.toLowerCase())
+                        // }
+                        className="border border-blue-500 rounded px-2 py-1"
+                      >
+                        {hours.map(
+                          hour => (
+                            <Option key={hour} value={hour}>
+                              {hour}
+                            </Option>
+                          )
+                        )}
+                      </Select>
+                    </div>
+                    <div className="">
+                      <p className="mr-4 mb-1 text-sl font-semibold text-block">
+                        Hora fin
+                      </p>
+                      <Select
+                        // showSearch
+                        onSearch={e => console.log('eee', e)}
+                        defaultValue="07:00"
+                        // filterOption={(input, option) =>
+                        //   option.children.toLowerCase().includes(input.toLowerCase())
+                        // }
+                        className="border border-blue-500 rounded px-2 py-1"
+                      >
+                        {hours.map(
+                          hour => (
+                            <Option key={hour} value={hour}>
+                              {hour}
+                            </Option>
+                          )
+                        )}
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="w-3/12 flex space-x-4 mt-5">
+                    <Button type="primary" text="Buscar" />
+                    <Button type="warning" text="Reporte" />
+                  </div>
+                </div>
+        )
+
+        }
       </div>
       <div className="flex justify-between grow overflow-hidden relative border-t border-gray-200">
         {vehicleSelected && (
@@ -174,15 +188,24 @@ export const Principal = () => {
                 </tbody>
               </table>
             </div>
-            <div className="absolute w-full bottom-0 left-0 bg-red-500 h-14">
-              <p>&nbsp;</p>
+            <div className="absolute w-full bottom-0 left-0 h-14 flex justify-between items-center px-2 py-2">
+              <div className='bg-blue-500 px-2 py-2 rounded-full  h-9 w-9 flex justify-center items-center cursor-pointer'><img className='w-2' src={ICONARROWLEFT}/></div>
+              <div className='bg-blue-500 px-2 py-2 rounded-full  h-9 w-9 flex justify-center items-center cursor-pointer'><img className='w-2' src={ICONPLAY}/></div>
+              <div className='bg-blue-500 px-2 py-2 rounded-full  h-9 w-9 flex justify-center items-center cursor-pointer'><img className='w-2' src={ICONARROWRIGHT}/></div>
             </div>
           </div>
         )}
         {/* Map */}
-        <div className="bg-blue-500 w-full">
+        <div className="bg-blue-500 w-full relative">
           <MapView />
+          {vehicleSelected && (
+              <div onClick={showFilter} className='bg-blue-500 px-2 py-2 rounded-full  h-9 w-9 flex justify-center items-center cursor-pointer absolute left-2/4 z-1000 top-2'>
+                <img className='w-2' src={showFilters? ICONARROWTOP: ICONARROWBOTTOM}/>
+              </div>
+
+        )}          
         </div>
+
       </div>
     </div>
   )
