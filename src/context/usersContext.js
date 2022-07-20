@@ -72,13 +72,18 @@ export const UsersProvider = ({ children }) => {
     console.log(res.data.result)
   }
 
-  useEffect(() => {
-    getUsers()
-  }, [])
+  useEffect(() => {}, [])
   console.log(users)
   return (
     <UsersContext.Provider
-      value={{ users, createUser, deleteUser, updateUser, resetPassword }}
+      value={{
+        users,
+        createUser,
+        deleteUser,
+        updateUser,
+        resetPassword,
+        getUsers,
+      }}
     >
       {children}
     </UsersContext.Provider>
