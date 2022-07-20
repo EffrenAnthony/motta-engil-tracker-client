@@ -32,9 +32,9 @@ const columns = [
     key: 'operation',
     fixed: 'right',
     width: 20,
-    render: () => (
+    render: ({ _id }) => (
       <div className="w-5/12 m-auto flex items-center h-5">
-        <ModalEditPassword />
+        <ModalEditPassword userId={_id} />
       </div>
     ),
   },
@@ -57,7 +57,6 @@ const columns = [
     fixed: 'right',
     width: 15,
     render: ({ _id, name }) => {
-      console.log('aqui', _id, name)
       return (
         <div className="w-5/12 m-auto flex items-center h-5">
           <ModalDeleteUser userId={_id} userName={name} />
@@ -73,6 +72,7 @@ export const Usuarios = () => {
   useEffect(() => {
     getUsers()
   }, [])
+
   return (
     <div>
       <div className="flex px-5 py-5 justify-between">

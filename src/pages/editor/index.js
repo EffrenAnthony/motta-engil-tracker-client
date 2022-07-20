@@ -1,4 +1,4 @@
-import { Select, Menu, Popconfirm } from 'antd'
+import { Select, Menu, Modal } from 'antd'
 import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet'
 import { Input } from '../../common/Input'
 import { Table } from 'antd'
@@ -7,7 +7,9 @@ import React, { useRef, useState, useCallback } from 'react'
 import { HexColorPicker } from 'react-colorful'
 import useClickOutside from './../../hooks/useClickOutside'
 import { usePointsLines } from '../../context/pointsLinesContext'
+import { IconVehicle } from '../../components/Map/IconVehicle'
 
+const { confirm } = Modal
 const { Option } = Select
 const linesData = [
   {
@@ -57,19 +59,20 @@ const lines = [
 ]
 
 const MarkerList = ({ markers }) => {
+  console.log('points', markers)
   return (
     <>
       {markers.length > 0 &&
         markers.map(marker => (
           <Marker
-            key={marker}
-            position={position}
-            icon={isHistory ? IconPoint : IconVehicle}
-            eventHandlers={{
-              click: () => {
-                onClick()
-              },
-            }}
+            key={marker.id}
+            position={[marker.latitude, marker.longitude]}
+            icon={IconVehicle}
+            // eventHandlers={{
+            //   click: () => {
+            //     onClick()
+            //   },
+            // }}
           />
         ))}
     </>
@@ -77,35 +80,70 @@ const MarkerList = ({ markers }) => {
 }
 
 export const Editor = () => {
-  const { points, createPoint, deletePoint, pickLine, lines, createLine, deleteLine, } = usePointsLines()
+  const {
+    points,
+    createPoint,
+    deletePoint,
+    pickLine,
+    lines,
+    createLine,
+    deleteLine,
+  } = usePointsLines()
   const [point, setPoint] = useState({
-    name: "",
+    name: '',
     latitude: '',
     longitude: '',
-    color: "FF000000",
+    color: 'FF000000',
     icon: '',
   })
   const [line, setLine] = useState({
-   name:'',
-   latitude: {
-       start: '',
-       end:''
+    name: '',
+    latitude: {
+      start: '',
+      end: '',
     },
-   longitude: {
-       start: '',
-       end: ''
+    longitude: {
+      start: '',
+      end: '',
     },
-   color: '',
-   width: 2
-})
+    color: '',
+    width: 2,
+  })
   const [option, setOption] = useState(0)
   const [isOpen, toggle] = useState(false)
   const [color, setColor] = useState('#434343')
   const popover = useRef()
   const close = useCallback(() => toggle(false), [])
-
+  const deleteRecord = (option, key) => {
+    if (option == 0) deletePoint(key)
+    else deleteLine(key)
+    Modal.destroyAll()
+  }
   useClickOutside(popover, close)
-
+  const showConfirmDelete = key => {
+    confirm({
+      closable: true,
+      icon: null,
+      content: (
+        <div>
+          <p className="text-center font-semibold m-4">
+            {'Seguro que desea eliminar el registro?'}
+          </p>
+          <div className="flex flow-row gap-2">
+            <Button
+              text="Si"
+              type="primary"
+              onClick={() => deleteRecord(option, key)}
+            />
+            <Button text="No" type="warning" onClick={Modal.destroyAll} />
+          </div>
+        </div>
+      ),
+      footer: null,
+      okButtonProps: { style: { display: 'none' } },
+      cancelButtonProps: { style: { display: 'none' } },
+    })
+  }
   //Tabla
   const columns = [
     {
@@ -128,23 +166,18 @@ export const Editor = () => {
       dataIndex: 'operation',
       width: '20%',
       render: (_, elem) => (
-        <Popconfirm
-          title="Seguro que desea eliminar el registro?"
-          onConfirm={() => option == 0 ? deletePoint(elem.key):deleteLine(elem.key)}
-        >
-          <a>Delete</a>
-        </Popconfirm>
+        <Button text="Delete" onClick={() => showConfirmDelete(elem.key)} />
       ),
     },
   ]
 
-  const createP = async ()=>{
-    if(
+  const createP = async () => {
+    if (
       point.name != '' &&
       point.latitude != '' &&
       point.longitude != '' &&
       point.color != ''
-    ){
+    ) {
       await createPoint({
         name: point.name,
         latitude: point.latitude,
@@ -152,60 +185,53 @@ export const Editor = () => {
         color: color,
         icon: point.icon,
       })
-      setPoint(
-        {
-          name: "",
-          latitude: '',
-          longitude: '',
-          color: "FF000000",
-          icon: '',
-        }
-      )
-    }    
+      setPoint({
+        name: '',
+        latitude: '',
+        longitude: '',
+        color: 'FF000000',
+        icon: '',
+      })
+    }
   }
 
-  const createL = async ()=>{
-    if(
+  const createL = async () => {
+    if (
       line.name != '' &&
       line.latitudeStar != '' &&
       line.longitudeStar != '' &&
       line.latitudeEnd != '' &&
       line.longitudeEnd != '' &&
       line.color != ''
-    ){
-      await createLine(
-        {
-        name:line.name,
+    ) {
+      await createLine({
+        name: line.name,
         latitude: {
-            start: line.latitudeStar,
-            end:line.latitudeEnd
-         },
+          start: line.latitudeStar,
+          end: line.latitudeEnd,
+        },
         longitude: {
-            start:line.longitudeStar,
-            end: line.longitudeEnd
-         },
-        color:line.color,
-        width: 2
-        }
-     )
-      setLine(
-        {
-          name:'',
-          latitude: {
-              start: '',
-              end:''
-           },
-          longitude: {
-              start: '',
-              end: ''
-           },
-          color:FF000000,
-          width: 2
-       }
-      )
-    }    
+          start: line.longitudeStar,
+          end: line.longitudeEnd,
+        },
+        color: line.color,
+        width: 2,
+      })
+      setLine({
+        name: '',
+        latitude: {
+          start: '',
+          end: '',
+        },
+        longitude: {
+          start: '',
+          end: '',
+        },
+        color: FF000000,
+        width: 2,
+      })
+    }
   }
-
 
   return (
     <div className="w-full h-screen flex flex-col">
@@ -229,13 +255,14 @@ export const Editor = () => {
             <div className="w-5/12">
               <label>Nombre</label>
               <Input
-              value={option == 0 ? point.name:line.name}
-              onChange={event => {
-                option == 0 ?
-                setPoint({ ...point, name: event.target.value }):
-                setPoint({ ...line, name: event.target.value })
-              }}
-              placeholder="Escribe nombre" />
+                value={option == 0 ? point.name : line.name}
+                onChange={event => {
+                  option == 0
+                    ? setPoint({ ...point, name: event.target.value })
+                    : setPoint({ ...line, name: event.target.value })
+                }}
+                placeholder="Escribe nombre"
+              />
             </div>
             <div className="w-5/12">
               <label>Ícono</label>
@@ -248,7 +275,7 @@ export const Editor = () => {
                   />
 
                   {isOpen && (
-                    <div className="popover z-10" ref={popover}>
+                    <div className="popover z-1000" ref={popover}>
                       <HexColorPicker
                         color={color}
                         onChange={color => {
@@ -264,47 +291,52 @@ export const Editor = () => {
           <div className="flex justify-around">
             <div className="w-5/12">
               <label>Latitud</label>
-              <Input type="text" 
-              value={option == 0 ? point.latitude:line.latitudeStart}
-              onChange={event => {
-                option == 0 ?
-                setPoint({ ...point, latitude: event.target.value }):
-                setPoint({ ...line, latitudeStar: event.target.value })
-              }}
-              placeholder="Escribe latitud" />
+              <Input
+                type="text"
+                value={option == 0 ? point.latitude : line.latitudeStart}
+                onChange={event => {
+                  option == 0
+                    ? setPoint({ ...point, latitude: event.target.value })
+                    : setPoint({ ...line, latitudeStar: event.target.value })
+                }}
+                placeholder="Escribe latitud"
+              />
             </div>
             <div className="w-5/12">
               <label>Longitud</label>
-              <Input 
-              value={option == 0? point.longitude:line.longitudeStar}
-              onChange={event => {
-                option == 0?
-                setPoint({ ...point, longitude: event.target.value }):
-                setPoint({ ...line, longitudeStar: event.target.value })
-
-              }}
-              placeholder="Escribe longitud" />
+              <Input
+                value={option == 0 ? point.longitude : line.longitudeStar}
+                onChange={event => {
+                  option == 0
+                    ? setPoint({ ...point, longitude: event.target.value })
+                    : setPoint({ ...line, longitudeStar: event.target.value })
+                }}
+                placeholder="Escribe longitud"
+              />
             </div>
           </div>
           {option == 1 && (
             <div className="flex justify-around">
               <div className="w-5/12">
                 <label>Latitud</label>
-                <Input type="text" 
-                value={line.latitudeEnd}
-                onChange={event => {
-                  setPoint({ ...line, latitudeEnd: event.target.value })
-                }}
-                placeholder="Escribe latitud" />
+                <Input
+                  type="text"
+                  value={line.latitudeEnd}
+                  onChange={event => {
+                    setPoint({ ...line, latitudeEnd: event.target.value })
+                  }}
+                  placeholder="Escribe latitud"
+                />
               </div>
               <div className="w-5/12">
                 <label>Longitud</label>
-                <Input 
-                value={line.longitudeEnd}
-                onChange={event => {
-                  setPoint({ ...line, longitudeEnd: event.target.value })
-                }}
-                placeholder="Escribe longitud" />
+                <Input
+                  value={line.longitudeEnd}
+                  onChange={event => {
+                    setPoint({ ...line, longitudeEnd: event.target.value })
+                  }}
+                  placeholder="Escribe longitud"
+                />
               </div>
             </div>
           )}
@@ -312,7 +344,7 @@ export const Editor = () => {
             <div className="w-4/12 mr-5">
               <Button
                 text="Agregar"
-                onClick={option == 0? createP:createL}
+                onClick={option == 0 ? createP : createL}
                 type="secondary"
                 style={{
                   marginBottom: 16,
@@ -329,33 +361,32 @@ export const Editor = () => {
         </div>
         <div className="w-6/12 shadow-lg shadow-blue-500/50  rounded mr-5">
           <Table
-            
-            size = 'small'
+            size="small"
             scroll={{
               y: 250,
             }}
             rowClassName={(_, index) =>
-                index % 2 === 0 ? 'py-2' : 'bg-gray-100 py-2'
+              index % 2 === 0 ? 'py-2' : 'bg-gray-100 py-2'
             }
             bordered
             dataSource={
-              option == 0 ?
-              points.map(elem => {
-              return {
-                name: elem.name,
-                key: elem.id,
-                latitude: elem.latitude,
-                longitude: elem.longitude
-                }
-              }):
-              lines.map(elem => {
-              return {
-                name: elem.name,
-                key: elem.id,
-                latitude: elem.latitude.start,
-                longitude: elem.longitude.start
-                }
-              })
+              option == 0
+                ? points.map(elem => {
+                    return {
+                      name: elem.name,
+                      key: elem.id,
+                      latitude: elem.latitude,
+                      longitude: elem.longitude,
+                    }
+                  })
+                : lines.map(elem => {
+                    return {
+                      name: elem.name,
+                      key: elem.id,
+                      latitude: elem.latitude.start,
+                      longitude: elem.longitude.start,
+                    }
+                  })
             }
             columns={columns}
             pagination={false}
@@ -372,7 +403,7 @@ export const Editor = () => {
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <MarkerList markers={[]} />
+            <MarkerList markers={points} />
             <Polyline positions={lines} pathOptions={{ color: 'green' }} />
           </MapContainer>
         </div>

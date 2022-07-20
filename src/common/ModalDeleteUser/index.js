@@ -20,7 +20,7 @@ export const ModalDeleteUser = ({ userId, userName }) => {
       icon: null,
       content: (
         <div>
-          <p className="text-center font-semibold">
+          <p className="text-center font-semibold mb-6">
             {`¿Deseas eliminar al usuario ${userName}`}
           </p>
           <div className="flex flow-row gap-2">
@@ -34,6 +34,7 @@ export const ModalDeleteUser = ({ userId, userName }) => {
       cancelButtonProps: { style: { display: 'none' } },
     })
   }
+
   return (
     <>
       <Button

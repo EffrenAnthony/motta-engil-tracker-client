@@ -11,23 +11,36 @@ import { useCurrentUser } from '../context/authContext'
 import { useLocation } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 
+const { confirm } = Modal
+
 export const Layout = ({ children }) => {
-  const [isModalVisible, setIsModalVisible] = useState(false)
   const { pathname } = useLocation()
   const { logout } = useCurrentUser()
 
-  console.log('location', pathname)
-  const showModal = () => {
-    setIsModalVisible(true)
-  }
-
   const handleOk = () => {
-    setIsModalVisible(false)
+    Modal.destroyAll()
     logout()
   }
 
-  const handleCancel = () => {
-    setIsModalVisible(false)
+  const showConfirm = () => {
+    confirm({
+      closable: true,
+      icon: null,
+      content: (
+        <div>
+          <p className="text-center font-semibold mb-6">
+            ¿Esta seguro que desea cerrar sesión?
+          </p>
+          <div className="flex flow-row gap-2">
+            <Button text="Si" type="primary" onClick={handleOk} />
+            <Button text="No" type="warning" onClick={Modal.destroyAll} />
+          </div>
+        </div>
+      ),
+      footer: null,
+      okButtonProps: { style: { display: 'none' } },
+      cancelButtonProps: { style: { display: 'none' } },
+    })
   }
 
   return (
@@ -116,14 +129,8 @@ export const Layout = ({ children }) => {
                 />
               }
               text="Cerrar sesión"
-              onClick={showModal}
+              onClick={showConfirm}
             ></Button>
-            <Modal
-              title="¿Esta seguro que desea cerrar sesión?"
-              visible={isModalVisible}
-              onOk={handleOk}
-              onCancel={handleCancel}
-            ></Modal>
           </div>
         </div>
         <div className="w-9/12 max-h-screen">{children}</div>

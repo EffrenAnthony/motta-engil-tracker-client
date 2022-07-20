@@ -30,7 +30,10 @@ const ChangeCenter = ({ center, zoom, vehicleSelected }) => {
   const map = useMap()
   const zoomP = vehicleSelected ? zoom + 2 : zoom
   map.setView(
-    [center[0], vehicleSelected ? center[1] + 0.01 : center[1]],
+    [
+      vehicleSelected ? center[0] - 0.005 : center[0],
+      vehicleSelected ? center[1] + 0.005 : center[1],
+    ],
     zoomP
   )
   return null

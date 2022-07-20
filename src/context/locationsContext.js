@@ -22,7 +22,6 @@ export const LocationsProvider = ({ children }) => {
     // console.log('get  vehicles filters', filters)
     let params = userId ? 'filter=userId:' + userId : ''
     // params = startDate ? 'filter=userId:' + user : ''
-    console.log('params', params)
     const res = await http(
       process.env.REACT_APP_BACK_URL + '/location/tracker?' + params,
       'GET'

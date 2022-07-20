@@ -30,7 +30,7 @@ const getTime = (time, resetHour) => {
 }
 
 export const Principal = () => {
-  const [showFilters, setShowfilters] = useState(true)
+  const [showFilters, setShowfilters] = useState(false)
   const { users, getUsers } = useUsers()
   const [filters, setFilters] = useState({
     userId: '',
@@ -108,14 +108,18 @@ export const Principal = () => {
     getVehicles(filters)
   }, [])
 
+  useEffect(() => {
+    if (vehicleSelected === true) setShowfilters(true)
+  }, [vehicleSelected])
+
   return (
     <div className="w-full h-screen flex flex-col">
       <div className="py-4">
-        <h1 className="text-blue-500 text-3xl font-semibold px-5 py-2">
+        <h1 className="text-blue-500 text-3xl font-semibold px-5 py-1">
           Principal
         </h1>
         {showFilters && (
-          <div className="px-5">
+          <div className="px-5 py-4">
             <div className="w-72 mb-2">
               <span className="mr-4 text-sm font-semibold">Usuario</span>
               <Select
@@ -124,7 +128,7 @@ export const Principal = () => {
                 onSelect={(e, user) =>
                   setFilters({ ...filters, userId: user.key })
                 }
-                className="border border-blue-500 rounded px-2 py-1"
+                className="border border-blue-500 rounded "
               >
                 {options.map(option => (
                   <Option key={option.key} value={option.label}>
@@ -164,7 +168,7 @@ export const Principal = () => {
                 </p>
                 <Select
                   defaultValue={filters.startHour}
-                  className="border border-blue-500 rounded px-2 py-1"
+                  className="border border-blue-500 rounded"
                 >
                   {hours.map(hour => (
                     <Option key={hour} value={hour}>
@@ -180,7 +184,7 @@ export const Principal = () => {
                 <Select
                   onSearch={e => console.log('eee', e)}
                   defaultValue={filters.endHour}
-                  className="border border-blue-500 rounded px-2 py-1"
+                  className="border border-blue-500 rounded"
                 >
                   {hours.map(hour => (
                     <Option key={hour} value={hour}>

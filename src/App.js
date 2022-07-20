@@ -1,5 +1,4 @@
 // import ReactDOM from "react-dom/client";
-import 'antd/dist/antd.min.css'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Login } from './pages/login'
 import { Principal } from './pages/principal'
@@ -41,11 +40,11 @@ function App() {
             <Route
               path="/point-editor"
               element={
-               <PointsLinesProvider>
-                 <Layout>
-                  <Editor />
-                </Layout>
-               </PointsLinesProvider>
+                <PointsLinesProvider>
+                  <Layout>
+                    <Editor />
+                  </Layout>
+                </PointsLinesProvider>
               }
             ></Route>
             <Route

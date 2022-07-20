@@ -48,13 +48,12 @@ export const UsersProvider = ({ children }) => {
       console.log(error)
     }
   }
-  const resetPassword = async user => {
+  const updatePasswordUser = async user => {
     const res = await http(
-      process.env.REACT_APP_BACK_URL + '/user',
-      'DELETE',
+      process.env.REACT_APP_BACK_URL + '/user/' + user.id,
+      'PUT',
       user
     )
-    console.log(res.data.result)
   }
   const updateUser = async user => {
     const res = await http(
@@ -68,12 +67,8 @@ export const UsersProvider = ({ children }) => {
       message.success('Usuario actualizado correctamente')
       getUsers()
     }
-
-    console.log(res.data.result)
   }
 
-  useEffect(() => {}, [])
-  console.log(users)
   return (
     <UsersContext.Provider
       value={{
@@ -81,7 +76,7 @@ export const UsersProvider = ({ children }) => {
         createUser,
         deleteUser,
         updateUser,
-        resetPassword,
+        updatePasswordUser,
         getUsers,
       }}
     >

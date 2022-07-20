@@ -6,33 +6,20 @@ import { Button } from '../Button'
 import { useUsers } from '../../context/usersContext'
 import ICONPASS from '../../assets/images/password.svg'
 
-export const ModalEditPassword = () => {
+export const ModalEditPassword = ({ userId }) => {
   //Modal
   const [visible, setVisible] = useState(false)
   const [confirmLoading, setConfirmLoading] = useState(false)
   const [user, setUser] = useState({
-    name: '',
     pass: '',
-    confirmPass: '',
-    email: '',
   })
   const [form] = Form.useForm()
-  const { createUser } = useUsers()
+  const { updatePasswordUser } = useUsers()
   const showModal = () => {
     setVisible(true)
   }
 
-  // const handleOk = () => {
-  //   setModalText('The modal will be closed after two seconds')
-  //   setConfirmLoading(true)
-  //   setTimeout(() => {
-  //     setVisible(false)
-  //     setConfirmLoading(false)
-  //   }, 2000)
-  // }
-
   const handleCancel = () => {
-    console.log('Clicked cancel button')
     setVisible(false)
   }
   //FinModal
@@ -40,36 +27,19 @@ export const ModalEditPassword = () => {
   const submit = async () => {
     setConfirmLoading(true)
 
-    if (
-      user.name != '' &&
-      user.email != '' &&
-      user.pass != '' &&
-      user.confirmPass != ''
-    ) {
-      if (user.pass == user.confirmPass) {
-        await createUser({
-          role: 'admin',
-          name: user.name,
-          user: user.name,
-          pass: user.pass,
-          email: user.email,
-          color: 'FF000000',
-        })
+    if (user.pass == user.confirmPass) {
+      await updatePasswordUser({
+        pass: user.pass,
+        id: userId,
+      })
 
-        setVisible(false)
-        setConfirmLoading(false)
-        setUser({
-          name: '',
-          pass: '',
-          confirmPass: '',
-          email: '',
-        })
-      } else {
-        message.warning('Las contraseñas no coinciden')
-        setConfirmLoading(false)
-      }
+      setVisible(false)
+      setConfirmLoading(false)
+      setUser({
+        confirmPass: '',
+      })
     } else {
-      message.warning('Por favor completar todos los campos')
+      message.warning('Las contraseñas no coinciden')
       setConfirmLoading(false)
     }
   }
@@ -84,14 +54,12 @@ export const ModalEditPassword = () => {
       />
 
       <Modal
-        // title="Usuarios"
         visible={visible}
-        onOk={form.submit}
         confirmLoading={confirmLoading}
+        footer={null}
+        closable={true}
         onCancel={handleCancel}
       >
-        {/* <p>{modalText}</p> */}
-
         <h2 className="text-blue-500 text-3xl font-semibold">Usuarios</h2>
         <Form form={form} onFinish={submit}>
           <p className="text-blue-500 font-semibold">Reestablecer contraseña</p>
@@ -130,6 +98,10 @@ export const ModalEditPassword = () => {
                 </div>
               </div>
             </Space>
+          </div>
+          <div className="flex flow-row gap-2 mt-6">
+            <Button text="Guardar" type="primary" htmlType="submit" />
+            <Button text="Cancelar" type="warning" onClick={handleCancel} />
           </div>
         </Form>
       </Modal>

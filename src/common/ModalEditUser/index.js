@@ -77,6 +77,8 @@ export const ModalEditUser = ({ name, email, color, _id }) => {
         onOk={form.submit}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
+        closable={true}
+        footer={null}
       >
         {/* <p>{modalText}</p> */}
 
@@ -118,7 +120,7 @@ export const ModalEditUser = ({ name, email, color, _id }) => {
                 />
 
                 {isOpen && (
-                  <div className="popover" ref={popover}>
+                  <div className="popover z-1000" ref={popover}>
                     <HexColorPicker
                       color={user.color}
                       onChange={color => {
@@ -129,6 +131,10 @@ export const ModalEditUser = ({ name, email, color, _id }) => {
                 )}
               </div>
             </div>
+          </div>
+          <div className="flex flow-row gap-2 mt-4">
+            <Button text="Guardar" type="primary" htmlType="submit" />
+            <Button text="Cancelar" type="warning" onClick={handleCancel} />
           </div>
         </Form>
       </Modal>

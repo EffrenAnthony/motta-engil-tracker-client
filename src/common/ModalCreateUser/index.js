@@ -154,7 +154,7 @@ export const ModalUser = () => {
                 />
 
                 {isOpen && (
-                  <div className="popover z-10" ref={popover}>
+                  <div className="popover z-1000" ref={popover}>
                     <HexColorPicker
                       color={user.color}
                       onChange={color => setUser({ ...user, color })}
@@ -165,8 +165,8 @@ export const ModalUser = () => {
             </div>
           </div>
           <div className="flex flow-row gap-2 mt-4">
-            <Button text="Si" type="primary" htmlType="submit" />
-            <Button text="No" type="warning" onClick={handleCancel} />
+            <Button text="Guardar" type="primary" htmlType="submit" />
+            <Button text="Cancelar" type="warning" onClick={handleCancel} />
           </div>
         </Form>
       </Modal>

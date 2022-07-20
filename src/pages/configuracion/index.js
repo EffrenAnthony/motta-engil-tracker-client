@@ -1,12 +1,15 @@
 import { Input } from '../../common/Input'
 import { Table } from 'antd'
 import { Button } from '../../common/Button'
+import ICONDELETE from '../../assets/images/delete.svg'
+
 // tabla
-import { Popconfirm } from 'antd'
+import { Modal } from 'antd'
 import React, { useState } from 'react'
 import { useLoads } from '../../context/loadsContext'
 import X from '../../assets/images/circle-x.png'
 
+const { confirm } = Modal
 //Fin tabla
 export const Configuracion = () => {
   //Tabla
@@ -21,12 +24,11 @@ export const Configuracion = () => {
     {
       dataIndex: 'operation',
       render: (_, material) => (
-        <Popconfirm
-          title="Seguro que desea eliminar el material?"
-          onConfirm={() => deleteLoad(material.key)}
-        >
-          <img className="h-4 w-4" src={X} />
-        </Popconfirm>
+        <Button
+          text={<img className="w-12/12 m-auto h-5" src={ICONDELETE} />}
+          type="danger"
+          onClick={() => showConfirm(material.key)}
+        />
       ),
     },
   ]
@@ -34,6 +36,36 @@ export const Configuracion = () => {
   const create = () => {
     createLoad(load)
     setLoad('')
+  }
+
+  const deleteRecord = key => {
+    deleteLoad(key)
+    Modal.destroyAll()
+  }
+
+  const showConfirm = key => {
+    confirm({
+      closable: true,
+      icon: null,
+      content: (
+        <div>
+          <p className="text-center font-semibold mb-6">
+            Seguro que desea eliminar el material?
+          </p>
+          <div className="flex flow-row gap-2">
+            <Button
+              text="Si"
+              type="primary"
+              onClick={() => deleteRecord(key)}
+            />
+            <Button text="No" type="warning" onClick={Modal.destroyAll} />
+          </div>
+        </div>
+      ),
+      footer: null,
+      okButtonProps: { style: { display: 'none' } },
+      cancelButtonProps: { style: { display: 'none' } },
+    })
   }
 
   return (
