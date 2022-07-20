@@ -12,6 +12,7 @@ import { UsersProvider } from './context/usersContext'
 import { LocationsProvider } from './context/locationsContext'
 import { LoadProvider } from './context/loadsContext'
 import { getToken } from './helpers/token'
+import { PointsLinesProvider } from './context/pointsLinesContext'
 
 function App() {
   const local = getToken()
@@ -40,9 +41,11 @@ function App() {
             <Route
               path="/point-editor"
               element={
-                <Layout>
+               <PointsLinesProvider>
+                 <Layout>
                   <Editor />
                 </Layout>
+               </PointsLinesProvider>
               }
             ></Route>
             <Route

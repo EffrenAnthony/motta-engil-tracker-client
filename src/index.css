@@ -49,3 +49,11 @@
 .ant-modal-confirm-btns {
   margin: 0 !important;
 }
+
+
+.ant-table-tbody>tr>td, .ant-table-thead>tr>th, .ant-table tfoot>tr>td, .ant-table tfoot>tr>th {
+  overflow-wrap: initial;
+}
+/* .ant-table-cell {
+  padding: 5px !important;
+} */
