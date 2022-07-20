@@ -1,15 +1,9 @@
 import React from 'react'
-import { Marker, Popup } from 'react-leaflet'
+import { Marker, Tooltip } from 'react-leaflet'
 import { IconVehicle, IconPoint } from './IconVehicle'
 import moment from 'moment'
 
-const LocationMarker = ({
-  position,
-  description,
-  date,
-  onClick,
-  isHistory,
-}) => {
+const LocationMarker = ({ position, date, onClick, isHistory, user }) => {
   return (
     <Marker
       position={position}
@@ -28,6 +22,7 @@ const LocationMarker = ({
           </strong>
         </h3>
       </Popup> */}
+      {!isHistory && <Tooltip>{user}</Tooltip>}
     </Marker>
   )
 }

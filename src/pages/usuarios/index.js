@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Input } from 'antd'
 import { Table } from 'antd'
 import { ModalUser } from '../../common/ModalCreateUser'
@@ -67,7 +68,11 @@ const columns = [
 ]
 
 export const Usuarios = () => {
-  const { users } = useUsers()
+  const { users, getUsers } = useUsers()
+
+  useEffect(() => {
+    getUsers()
+  }, [])
   return (
     <div>
       <div className="flex px-5 py-5 justify-between">
@@ -85,6 +90,7 @@ export const Usuarios = () => {
         </div>
         <div className="mt-5">
           <Table
+            rowKey={record => record._id}
             columns={columns}
             dataSource={users}
             pagination={{

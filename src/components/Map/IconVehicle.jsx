@@ -16,7 +16,7 @@ const IconPoint = L.icon({
   shadowUrl: null,
   shadowSize: null,
   shadowAnchor: null,
-  iconSize: [15, 15],
+  iconSize: [20, 20],
   className: 'leaflet-venue-icon',
 })
 
