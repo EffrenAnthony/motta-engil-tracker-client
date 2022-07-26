@@ -1,16 +1,19 @@
-import { Select, Menu, Modal } from 'antd'
+import { Select, Menu, Modal, message } from 'antd'
 import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet'
 import { Input } from '../../common/Input'
 import { Table } from 'antd'
 import { Button } from '../../common/Button'
 import React, { useRef, useState, useCallback } from 'react'
+import { useMap } from 'react-leaflet/hooks'
 import { HexColorPicker } from 'react-colorful'
 import useClickOutside from './../../hooks/useClickOutside'
 import { usePointsLines } from '../../context/pointsLinesContext'
 import { IconVehicle } from '../../components/Map/IconVehicle'
+import ICONSUBIR from '../../assets/images/polygon.svg'
 
 const { confirm } = Modal
 const { Option } = Select
+
 const linesData = [
   {
     lat1: -12.088125890009097,
@@ -59,7 +62,7 @@ const lines = [
 ]
 
 const MarkerList = ({ markers }) => {
-  console.log('points', markers)
+  // console.log('points', markers)
   return (
     <>
       {markers.length > 0 &&
@@ -79,7 +82,29 @@ const MarkerList = ({ markers }) => {
   )
 }
 
+const ChangeCenter = ({ center, zoom, option }) => {
+  const map = useMap()
+  map.setView(center,zoom)
+  return null
+}
+
+const LinesList = ({ lines }) => {
+  console.log('xxxxxx', lines)
+  return (
+    <>
+      {lines.length > 0 &&
+        lines.map(line => (
+          <Polyline 
+            key={line.id} 
+            positions={[[line.latitude.start,line.latitude.end],[line.longitude.start,line.longitude.end]]} 
+            pathOptions={{ color: 'red' }} />
+        ))}
+    </>
+  )
+}
+
 export const Editor = () => {
+
   const {
     points,
     createPoint,
@@ -89,6 +114,7 @@ export const Editor = () => {
     createLine,
     deleteLine,
   } = usePointsLines()
+
   const [point, setPoint] = useState({
     name: '',
     latitude: '',
@@ -96,19 +122,16 @@ export const Editor = () => {
     color: 'FF000000',
     icon: '',
   })
+
   const [line, setLine] = useState({
     name: '',
-    latitude: {
-      start: '',
-      end: '',
-    },
-    longitude: {
-      start: '',
-      end: '',
-    },
-    color: '',
-    width: 2,
+    latitudeStart: '',
+    latitudeEnd: '',
+    longitudeStart: '',
+    longitudeEnd: '',
+    color: 'FF000000',
   })
+
   const [option, setOption] = useState(0)
   const [isOpen, toggle] = useState(false)
   const [color, setColor] = useState('#434343')
@@ -193,13 +216,16 @@ export const Editor = () => {
         icon: '',
       })
     }
+    else 
+      message.warning('Completar los campos')
+
   }
 
   const createL = async () => {
     if (
       line.name != '' &&
-      line.latitudeStar != '' &&
-      line.longitudeStar != '' &&
+      line.latitudeStart != '' &&
+      line.longitudeStart != '' &&
       line.latitudeEnd != '' &&
       line.longitudeEnd != '' &&
       line.color != ''
@@ -207,11 +233,11 @@ export const Editor = () => {
       await createLine({
         name: line.name,
         latitude: {
-          start: line.latitudeStar,
+          start: line.latitudeStart,
           end: line.latitudeEnd,
         },
         longitude: {
-          start: line.longitudeStar,
+          start: line.longitudeStart,
           end: line.longitudeEnd,
         },
         color: line.color,
@@ -219,19 +245,48 @@ export const Editor = () => {
       })
       setLine({
         name: '',
-        latitude: {
-          start: '',
-          end: '',
-        },
-        longitude: {
-          start: '',
-          end: '',
-        },
-        color: FF000000,
-        width: 2,
+        latitudeStart: '',
+        latitudeEnd: '',
+        longitudeStart: '',
+        longitudeEnd: '',
+        color: 'FF000000',
       })
     }
+    else 
+      message.warning('Completar los campos')
   }
+
+  let x =-12.104500
+  let y =-77.036779
+  if(option == 0 && points[points.length - 1] )
+    x=points[points.length - 1].latitude
+
+  if(option == 1 && lines[lines.length - 1])
+    x=lines[lines.length - 1]?.latitude?.start
+
+  if(option == 0 && points[points.length - 1] )
+    y=points[points.length - 1].longitude
+
+  if(option == 1 && lines[lines.length - 1])
+    y=lines[lines.length - 1]?.longitude?.end
+
+  const zoom = 13
+
+  //modal
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   return (
     <div className="w-full h-screen flex flex-col">
@@ -258,15 +313,16 @@ export const Editor = () => {
                 value={option == 0 ? point.name : line.name}
                 onChange={event => {
                   option == 0
+
                     ? setPoint({ ...point, name: event.target.value })
-                    : setPoint({ ...line, name: event.target.value })
+                    : setLine({ ...line, name: event.target.value })
                 }}
                 placeholder="Escribe nombre"
               />
             </div>
             <div className="w-5/12">
               <label>Ícono</label>
-              <div>
+              <div className='flex justify-between'>
                 <div className="picker">
                   <div
                     className="swatch"
@@ -285,6 +341,25 @@ export const Editor = () => {
                     </div>
                   )}
                 </div>
+                <div className='w-4/12'>
+                  <Button type="primary" text={<img className="w-5/12 m-auto h-5 py-1" src={ICONSUBIR} />} onClick={showModal} />
+                  <Modal title="" visible={isModalVisible} 
+                  // onOk={handleOk} 
+                  onCancel={handleCancel}
+                  footer={null}
+                  >
+                          <div className='border-dashed border-2 relative mt-10 py-5 px-5 h-20 '>
+                            <input className='btnFile' type='file'/>
+                            <div className='text-center flex justify-center'>
+                              <p className='mr-3'>Seleccionar icono</p>
+                              <img className='rounded-full h-7 border-blue-500 rounded w-7 bg-blue-500 py-2 px-2' src={ICONSUBIR} />
+                            </div>
+                          </div>
+                          <div className='m-auto w-3/12 mt-3'>
+                            <Button type='primary' text={'Cargar'}></Button>
+                          </div>
+                  </Modal>
+                </div>
               </div>
             </div>
           </div>
@@ -297,7 +372,7 @@ export const Editor = () => {
                 onChange={event => {
                   option == 0
                     ? setPoint({ ...point, latitude: event.target.value })
-                    : setPoint({ ...line, latitudeStar: event.target.value })
+                    : setLine({ ...line, latitudeStart: event.target.value })
                 }}
                 placeholder="Escribe latitud"
               />
@@ -305,11 +380,11 @@ export const Editor = () => {
             <div className="w-5/12">
               <label>Longitud</label>
               <Input
-                value={option == 0 ? point.longitude : line.longitudeStar}
+                value={option == 0 ? point.longitude : line.latitudeEnd}
                 onChange={event => {
                   option == 0
                     ? setPoint({ ...point, longitude: event.target.value })
-                    : setPoint({ ...line, longitudeStar: event.target.value })
+                    : setLine({ ...line, latitudeEnd: event.target.value })
                 }}
                 placeholder="Escribe longitud"
               />
@@ -321,9 +396,9 @@ export const Editor = () => {
                 <label>Latitud</label>
                 <Input
                   type="text"
-                  value={line.latitudeEnd}
+                  value={line.longitudeStart}
                   onChange={event => {
-                    setPoint({ ...line, latitudeEnd: event.target.value })
+                    setLine({ ...line, longitudeStart: event.target.value })
                   }}
                   placeholder="Escribe latitud"
                 />
@@ -333,7 +408,7 @@ export const Editor = () => {
                 <Input
                   value={line.longitudeEnd}
                   onChange={event => {
-                    setPoint({ ...line, longitudeEnd: event.target.value })
+                    setLine({ ...line, longitudeEnd: event.target.value })
                   }}
                   placeholder="Escribe longitud"
                 />
@@ -345,7 +420,7 @@ export const Editor = () => {
               <Button
                 text="Agregar"
                 onClick={option == 0 ? createP : createL}
-                type="secondary"
+                type="primary"
                 style={{
                   marginBottom: 16,
                 }}
@@ -396,15 +471,19 @@ export const Editor = () => {
       <div className="flex grow relative border-t border-gray-200 w-full">
         <div className="bg-blue-500 w-full">
           <MapContainer
-            center={[-12.08887074583288, -77.03522255409378]}
-            zoom={15}
+            center={[x,y]}
           >
+            <ChangeCenter
+              center={[x,y]}
+              zoom={zoom}
+              option={option}
+            />
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <MarkerList markers={points} />
-            <Polyline positions={lines} pathOptions={{ color: 'green' }} />
+            {option == 0 &&<MarkerList markers={points} />}
+            {option == 1 && <LinesList lines={lines} />}
           </MapContainer>
         </div>
       </div>

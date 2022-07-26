@@ -117,6 +117,7 @@ export const Configuracion = () => {
           columns={columns}
           pagination={false}
           locale={{ emptyText: 'No hay materiales' }}
+          size="small"
         />
       </div>
     </div>

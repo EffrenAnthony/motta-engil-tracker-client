@@ -13,18 +13,20 @@ export const PointsLinesProvider = ({ children }) => {
 
   const getPoints = async () => {
     const res = await http(
-      process.env.REACT_APP_BACK_URL + '/places',
+      process.env.REACT_APP_BACK_URL + '/places/?filter=type:point',
       'GET'
     )
-    console.log(res.data.result)
+    // console.log(res.data.result)
     setPoints(res.data.result)
   }
 
   const getLines = async () => {
     const res = await http(
-      process.env.REACT_APP_BACK_URL + '/',
+      process.env.REACT_APP_BACK_URL + '/places/?filter=type:line',
       'GET'
     )
+    // console.log(res.data.result)
+
     setLines(res.data.result)
   }
 
@@ -48,18 +50,18 @@ export const PointsLinesProvider = ({ children }) => {
   }
 
   const createLine = async (line) => {
-    const res = await http(
-      process.env.REACT_APP_BACK_URL + '/places/line',
-      'POST',
-      line
-    )
     try {
-        if(res.msg == 'error'){
-            message.success('error')
-        }else {
-            message.success('Linea creada')
-            getLines()
-          }
+      const res = await http(
+        process.env.REACT_APP_BACK_URL + '/places/line',
+        'POST',
+        line
+      )
+      if(res.msg == 'error'){
+          message.success('error')
+      }else {
+          message.success('Linea creada')
+          getLines()
+        }
     } catch(e){
         console.log('catch', error)
     }
@@ -131,7 +133,7 @@ export const PointsLinesProvider = ({ children }) => {
           message.success(res.data)
       }else {
         message.success('Linea actualizad')
-        getPoints()
+        getLines()
       }
     } catch(e){
         console.log('catch', error)
@@ -143,6 +145,7 @@ export const PointsLinesProvider = ({ children }) => {
 
   useEffect(() => {
     getPoints()
+    getLines()
   }, [])
   return (
     <PointsLinesContext.Provider

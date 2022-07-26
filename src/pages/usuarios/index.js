@@ -15,14 +15,12 @@ const columns = [
     width: 40,
     dataIndex: 'user',
     key: 'user',
-    fixed: 'left',
   },
   {
     title: 'Fecha de creación',
     width: 25,
     dataIndex: 'createdAt',
     key: 'createdAt',
-    fixed: 'left',
     render: date => {
       return new Date(date).toLocaleDateString('en-US') || '-'
     },
@@ -30,7 +28,6 @@ const columns = [
   {
     title: 'Restablecer contraseña',
     key: 'operation',
-    fixed: 'right',
     width: 20,
     render: ({ _id }) => (
       <div className="w-5/12 m-auto flex items-center h-5">
@@ -41,7 +38,6 @@ const columns = [
   {
     title: 'Editar',
     key: 'operation',
-    fixed: 'right',
     width: 15,
     render: user => {
       return (
@@ -54,7 +50,6 @@ const columns = [
   {
     title: 'Eliminar usuario',
     key: 'operation',
-    fixed: 'right',
     width: 15,
     render: ({ _id, name }) => {
       return (
@@ -96,6 +91,10 @@ export const Usuarios = () => {
             pagination={{
               hideOnSinglePage: true,
             }}
+            rowClassName={(_, index) =>
+              index % 2 === 0 ? 'py-2' : 'bg-gray-100 py-5'
+            }
+            size="small"
           />
         </div>
       </div>

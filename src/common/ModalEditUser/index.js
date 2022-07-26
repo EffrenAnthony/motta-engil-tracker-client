@@ -67,7 +67,7 @@ export const ModalEditUser = ({ name, email, color, _id }) => {
       {/* <Button type="secondary" text="Crear Usuario" onClick={showModal} /> */}
       <Button
         text={<img className="w-5/12 m-auto h-5" src={ICONEDIT} />}
-        type="warning"
+        type="secondary"
         onClick={showModal}
       />
 
