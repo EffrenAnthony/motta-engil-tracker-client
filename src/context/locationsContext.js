@@ -3,6 +3,7 @@ import { http } from '../helpers/http'
 import { useNavigate } from 'react-router-dom'
 import { message } from 'antd'
 import { isCompositeComponent } from 'react-dom/test-utils'
+import moment from 'moment'
 
 const LocationsContext = createContext(null)
 export const useLocations = () => useContext(LocationsContext)
@@ -28,9 +29,20 @@ export const LocationsProvider = ({ children }) => {
     )
     setVehicles(res.data.result)
   }
-  const getHistory = async userId => {
+  const getHistory = async ({userId, startDate, endDate,startHour, endHour,}) => {
+    const timestart = moment({years:startDate.getFullYear(), months: startDate.getMonth(), date:startDate.getDate(), hours:startHour.split(':')[0], minutes:startHour.split(':')[1]}).format(); 
+    const timeEnd = moment({years:endDate.getFullYear(), months: endDate.getMonth(), date:endDate.getDate(), hours:endHour.split(':')[0], minutes:endHour.split(':')[1]}).format(); 
+    // console.log(timestart)
+    // console.log(timeEnd)
+    // const start = startDate + startHour;
+    // const end = endDate + endHour;
+    // console.log( moment.parseZone(startDate).utc().format(), 'startDate')
+    // console.log(endDate, 'endDate')
+    // console.log(startHour, 'startHour')
+    // console.log(endHour, 'startDate')
+    // console.log(userId, 'id')
     const result = await http(
-      process.env.REACT_APP_BACK_URL + '/location?filter=userId:' + userId,
+      process.env.REACT_APP_BACK_URL + '/location?filter=userId:' + userId + '&start=' + timestart + '&end=' + timeEnd,
       'GET'
     )
     setHistory(result.data.result)

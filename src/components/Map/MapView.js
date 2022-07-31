@@ -5,13 +5,20 @@ import { useLocations } from '../../context/locationsContext'
 
 import LocationMarker from './LocationMarker'
 
-const MarkerList = ({ markers, getHistory, isHistory }) => {
+const MarkerList = ({filters, markers, getHistory, isHistory, setUserId }) => {
   return (
     <>
       {markers.length > 0 &&
         markers.map(marker => (
           <LocationMarker
-            onClick={() => getHistory(marker.userId)}
+            onClick={() => {
+              getHistory({
+              ...filters,
+              userId: marker.userId,
+            })
+            console.log(marker)
+            setUserId(marker?.user?.name)}
+          }
             key={marker._id}
             position={[
               marker.latitude || -16.4054894,
@@ -39,7 +46,7 @@ const ChangeCenter = ({ center, zoom, vehicleSelected }) => {
   return null
 }
 
-function MapView() {
+function MapView({filters ,setUserId}) {
   const { vehicles, getHistory, history, pickVehicle, vehicleSelected } =
     useLocations()
   const mapRef = createRef()
@@ -83,6 +90,8 @@ function MapView() {
         markers={vehicleSelected ? history : vehicles}
         getHistory={clickVehicle}
         isHistory={vehicleSelected}
+        filters={filters}
+        setUserId = {setUserId}
       />
     </MapContainer>
   )

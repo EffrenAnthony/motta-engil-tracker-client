@@ -39,7 +39,7 @@ export const Principal = () => {
     startHour: getTime(now, true),
     endHour: getTime(new Date(now.getTime() + MILISECONDS_HOUR), true),
   })
-  const { history, vehicleSelected, getVehicles } = useLocations()
+  const { history, vehicleSelected, getVehicles,getHistory } = useLocations()
 
   const hours = [
     '00:00',
@@ -128,6 +128,7 @@ export const Principal = () => {
                 onSelect={(e, user) =>
                   setFilters({ ...filters, userId: user.key })
                 }
+                defaultValue={filters.userId}
                 className="border border-blue-500 rounded "
               >
                 {options.map(option => (
@@ -168,6 +169,9 @@ export const Principal = () => {
                 </p>
                 <Select
                   defaultValue={filters.startHour}
+                  onSelect={event => {
+                    setFilters({ ...filters, startHour: event })
+                  }}
                   className="border border-blue-500 rounded"
                 >
                   {hours.map(hour => (
@@ -184,6 +188,9 @@ export const Principal = () => {
                 <Select
                   onSearch={e => console.log('eee', e)}
                   defaultValue={filters.endHour}
+                  onSelect={event => {
+                    setFilters({ ...filters, endHour: event })
+                  }}
                   className="border border-blue-500 rounded"
                 >
                   {hours.map(hour => (
@@ -198,7 +205,7 @@ export const Principal = () => {
               <Button
                 type="primary"
                 text="Buscar"
-                onClick={() => getVehicles(filters)}
+                onClick={() => getHistory(filters)}
               />
               <Button type="warning" text="Reporte" />
             </div>
@@ -251,7 +258,7 @@ export const Principal = () => {
         )}
         {/* Map */}
         <div className="bg-blue-500 w-full relative">
-          <MapView />
+          <MapView filters={filters} setUserId = {(id)=>setFilters({ ...filters, userId: id })}/>
           {vehicleSelected && (
             <div
               onClick={showFilter}
