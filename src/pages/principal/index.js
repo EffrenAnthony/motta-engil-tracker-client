@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { useState } from 'react'
 import MapView from '../../components/Map/MapView'
 import DatePicker from 'react-datepicker'
+import { CSVLink } from 'react-csv'
 import 'leaflet/dist/leaflet.css'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useLocations } from '../../context/locationsContext'
@@ -14,84 +15,25 @@ import ICONARROWRIGHT from '../../assets/images/arrow-right.png'
 import ICONARROWTOP from '../../assets/images/arrow-top.png'
 import ICONARROWBOTTOM from '../../assets/images/arrow-bottom.png'
 import { useUsers } from '../../context/usersContext'
+import { getTime, hours } from '../../helpers/utils'
 
 const { Option } = Select
-const MILISECONDS_HOUR = 3600000
-
-const now = new Date()
-const getTime = (time, resetHour) => {
-  if (resetHour)
-    return `${
-      time.getHours() < 10 ? '0' + time.getHours() : time.getHours()
-    }:00`
-  return `${time.getHours() < 10 ? '0' + time.getHours() : time.getHours()}:${
-    time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes()
-  }`
-}
 
 export const Principal = () => {
+  let interval
   const [showFilters, setShowfilters] = useState(false)
   const { users, getUsers } = useUsers()
   const [filters, setFilters] = useState({
+    userName: '',
     userId: '',
-    startDate: now,
-    endDate: now,
-    startHour: getTime(now, true),
-    endHour: getTime(new Date(now.getTime() + MILISECONDS_HOUR), true),
+    startDate: '',
+    endDate: '',
+    startHour: '',
+    endHour: '',
   })
-  const { history, vehicleSelected, getVehicles,getHistory } = useLocations()
+  const [currentRecord, setCurrentRecord] = useState(-1)
+  const { history, vehicleSelected, getVehicles, getHistory } = useLocations()
 
-  const hours = [
-    '00:00',
-    '00:30',
-    '01:00',
-    '01:30',
-    '02:00',
-    '02:30',
-    '03:00',
-    '03:30',
-    '04:00',
-    '04:30',
-    '05:00',
-    '05:30',
-    '06:00',
-    '06:30',
-    '07:00',
-    '07:30',
-    '08:00',
-    '08:30',
-    '09:00',
-    '09:30',
-    '10:00',
-    '10:30',
-    '11:00',
-    '11:30',
-    '12:00',
-    '12:30',
-    '13:00',
-    '13:30',
-    '14:00',
-    '14:30',
-    '15:00',
-    '15:30',
-    '16:00',
-    '16:30',
-    '17:00',
-    '17:30',
-    '18:00',
-    '18:30',
-    '19:00',
-    '19:30',
-    '20:00',
-    '20:30',
-    '21:00',
-    '21:30',
-    '22:00',
-    '22:30',
-    '23:00',
-    '23:30',
-    '24:00',
-  ]
   const options = users.map(user => {
     return {
       label: user.name,
@@ -100,6 +42,24 @@ export const Principal = () => {
   })
   const showFilter = () => {
     setShowfilters(!showFilters)
+  }
+
+  const prevRecord = () => {
+    if (currentRecord > 0)
+      setCurrentRecord(currentRec => {
+        if (currentRec - 1 == 0) clearInterval(interval)
+        return currentRec - 1
+      })
+  }
+
+  const nextRecord = () => {
+    if (currentRecord < history.length - 1) setCurrentRecord(currentRecord + 1)
+  }
+
+  const playRecords = () => {
+    interval = setInterval(() => {
+      prevRecord()
+    }, 2000)
   }
   // Map
   // tabla
@@ -111,6 +71,10 @@ export const Principal = () => {
   useEffect(() => {
     if (vehicleSelected === true) setShowfilters(true)
   }, [vehicleSelected])
+
+  useEffect(() => {
+    if (history.length > 0) setCurrentRecord(history.length - 1)
+  }, [history])
 
   return (
     <div className="w-full h-screen flex flex-col">
@@ -128,7 +92,7 @@ export const Principal = () => {
                 onSelect={(e, user) =>
                   setFilters({ ...filters, userId: user.key })
                 }
-                defaultValue={filters.userId}
+                defaultValue={{ key: filters.userId, value: filters.userName }}
                 className="border border-blue-500 rounded "
               >
                 {options.map(option => (
@@ -186,7 +150,6 @@ export const Principal = () => {
                   Hora fin
                 </p>
                 <Select
-                  onSearch={e => console.log('eee', e)}
                   defaultValue={filters.endHour}
                   onSelect={event => {
                     setFilters({ ...filters, endHour: event })
@@ -207,7 +170,20 @@ export const Principal = () => {
                 text="Buscar"
                 onClick={() => getHistory(filters)}
               />
-              <Button type="warning" text="Reporte" />
+              <CSVLink
+                separator={';'}
+                headers={['FECHA', 'HORA', 'ACCION', 'MATERIAL']}
+                filename={'reporte.csv'}
+                className="block text-center bg-yellow-600 text-black hover:text-black w-full px-2 py-1 rounded  relative "
+                data={history.map(record => [
+                  new Date(record.createdAt).toLocaleDateString('en-GB'),
+                  getTime(new Date(record.createdAt)),
+                  record?.data?.topic || '-',
+                  record?.data?.material || '-',
+                ])}
+              >
+                Reporte
+              </CSVLink>
             </div>
           </div>
         )}
@@ -224,10 +200,15 @@ export const Principal = () => {
                   </tr>
                 </thead>
                 <tbody className=" divide-y border-b">
-                  {history.map(record => {
+                  {history.map((record, pos) => {
                     const time = new Date(record.createdAt)
                     return (
-                      <tr className="divide-x" key={record._id}>
+                      <tr
+                        className={`divide-x ${
+                          pos === currentRecord ? 'bg-green-50' : ''
+                        }`}
+                        key={record._id}
+                      >
                         <td className="">{getTime(time)}</td>
                         <td className="center">
                           {record.data ? record.data.topic : ''}
@@ -244,13 +225,22 @@ export const Principal = () => {
               </table>
             </div>
             <div className="absolute w-full bottom-0 left-0 h-14 flex justify-between items-center px-2 py-2">
-              <div className="bg-blue-500 px-2 py-2 rounded-full  h-9 w-9 flex justify-center items-center cursor-pointer">
+              <div
+                className="bg-blue-500 px-2 py-2 rounded-full  h-9 w-9 flex justify-center items-center cursor-pointer"
+                onClick={prevRecord}
+              >
                 <img className="w-2" src={ICONARROWLEFT} />
               </div>
-              <div className="bg-blue-500 px-2 py-2 rounded-full  h-9 w-9 flex justify-center items-center cursor-pointer">
+              <div
+                className="bg-blue-500 px-2 py-2 rounded-full  h-9 w-9 flex justify-center items-center cursor-pointer"
+                onClick={playRecords}
+              >
                 <img className="w-2" src={ICONPLAY} />
               </div>
-              <div className="bg-blue-500 px-2 py-2 rounded-full  h-9 w-9 flex justify-center items-center cursor-pointer">
+              <div
+                className="bg-blue-500 px-2 py-2 rounded-full  h-9 w-9 flex justify-center items-center cursor-pointer"
+                onClick={nextRecord}
+              >
                 <img className="w-2" src={ICONARROWRIGHT} />
               </div>
             </div>
@@ -258,7 +248,14 @@ export const Principal = () => {
         )}
         {/* Map */}
         <div className="bg-blue-500 w-full relative">
-          <MapView filters={filters} setUserId = {(id)=>setFilters({ ...filters, userId: id })}/>
+          <MapView
+            currentRecord={currentRecord}
+            setCurrentRecord={setCurrentRecord}
+            filters={filters}
+            updateFilters={updatedFilters => {
+              setFilters({ ...filters, ...updatedFilters })
+            }}
+          />
           {vehicleSelected && (
             <div
               onClick={showFilter}

@@ -2,31 +2,58 @@ import { useEffect, createRef } from 'react'
 import { MapContainer, TileLayer, CircleMarker } from 'react-leaflet'
 import { useMap } from 'react-leaflet/hooks'
 import { useLocations } from '../../context/locationsContext'
-
+import moment from 'moment'
 import LocationMarker from './LocationMarker'
+import { getTime } from './../../helpers/utils'
 
-const MarkerList = ({filters, markers, getHistory, isHistory, setUserId }) => {
+const MILISECONDS_HOUR = 3600000
+
+const MarkerList = ({
+  filters,
+  markers,
+  getHistory,
+  isHistory,
+  updateFilters,
+  currentRecord,
+  setCurrentRecord,
+}) => {
   return (
     <>
       {markers.length > 0 &&
-        markers.map(marker => (
+        markers.map((marker, pos) => (
           <LocationMarker
-            onClick={() => {
+            onClickVehicle={() => {
+              const timeFilters = {
+                startDate: new Date(marker.createdAt),
+                endDate: new Date(marker.createdAt + MILISECONDS_HOUR),
+                startHour: getTime(new Date(marker.createdAt), true),
+                endHour: getTime(
+                  new Date(marker.createdAt + MILISECONDS_HOUR),
+                  true
+                ),
+              }
               getHistory({
-              ...filters,
-              userId: marker.userId,
-            })
-            console.log(marker)
-            setUserId(marker?.user?.name)}
-          }
+                userId: marker.userId,
+                ...timeFilters,
+              })
+              updateFilters({
+                userId: marker?.userId,
+                userName: marker?.user?.name,
+                ...timeFilters,
+              })
+            }}
             key={marker._id}
             position={[
               marker.latitude || -16.4054894,
               marker.longitude || -71.5626081,
             ]}
             user={marker?.user?.name}
+            color={marker?.user?.color}
             date={marker?.dls}
             isHistory={isHistory}
+            current={currentRecord === pos}
+            isLast={markers.length - 1 === pos}
+            onClickRecord={() => setCurrentRecord(pos)}
           />
         ))}
     </>
@@ -35,18 +62,19 @@ const MarkerList = ({filters, markers, getHistory, isHistory, setUserId }) => {
 
 const ChangeCenter = ({ center, zoom, vehicleSelected }) => {
   const map = useMap()
-  const zoomP = vehicleSelected ? zoom + 2 : zoom
-  map.setView(
-    [
-      vehicleSelected ? center[0] - 0.005 : center[0],
-      vehicleSelected ? center[1] + 0.005 : center[1],
-    ],
-    zoomP
-  )
-  return null
+  map.setView([
+    vehicleSelected ? center[0] - 0.005 : center[0],
+    vehicleSelected ? center[1] + 0.005 : center[1],
+  ])
 }
 
-function MapView({filters ,setUserId}) {
+function MapView({
+  filters,
+  setUserId,
+  currentRecord,
+  setCurrentRecord,
+  updateFilters,
+}) {
   const { vehicles, getHistory, history, pickVehicle, vehicleSelected } =
     useLocations()
   const mapRef = createRef()
@@ -91,7 +119,10 @@ function MapView({filters ,setUserId}) {
         getHistory={clickVehicle}
         isHistory={vehicleSelected}
         filters={filters}
-        setUserId = {setUserId}
+        setUserId={setUserId}
+        currentRecord={currentRecord}
+        setCurrentRecord={setCurrentRecord}
+        updateFilters={updateFilters}
       />
     </MapContainer>
   )

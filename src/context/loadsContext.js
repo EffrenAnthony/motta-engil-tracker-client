@@ -10,7 +10,6 @@ export const LoadProvider = ({ children }) => {
   const [loads, setLoads] = useState([])
   const getLoads = async () => {
     const res = await http(process.env.REACT_APP_BACK_URL + '/loads', 'GET')
-    console.log('respuesta loads',res.data.result)
     setLoads(res.data.result)
   }
 
@@ -19,7 +18,7 @@ export const LoadProvider = ({ children }) => {
       const res = await http(
         process.env.REACT_APP_BACK_URL + '/loads',
         'POST',
-        {material:load}
+        { material: load }
       )
       if (res.msg == 'error') {
         message.error(res.data)
@@ -43,7 +42,6 @@ export const LoadProvider = ({ children }) => {
         message.success('Carga eliminada')
         getLoads()
       }
-      console.log(res.data)
     } catch (error) {
       console.log(error)
     }
@@ -51,11 +49,9 @@ export const LoadProvider = ({ children }) => {
 
   useEffect(() => {
     getLoads()
-
   }, [])
-  console.log('loads',loads)
   return (
-    <LoadsContext.Provider value={{ loads, createLoad, deleteLoad  }}>
+    <LoadsContext.Provider value={{ loads, createLoad, deleteLoad }}>
       {children}
     </LoadsContext.Provider>
   )

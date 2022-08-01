@@ -10,7 +10,6 @@ export const UsersProvider = ({ children }) => {
   const [users, setUsers] = useState([])
   const getUsers = async () => {
     const res = await http(process.env.REACT_APP_BACK_URL + '/user', 'GET')
-    console.log(res.data.result)
     setUsers(res.data.result)
   }
 
@@ -43,7 +42,6 @@ export const UsersProvider = ({ children }) => {
         message.success('Usuario eliminado')
         getUsers()
       }
-      console.log(res.data)
     } catch (error) {
       console.log(error)
     }

@@ -11,8 +11,18 @@ const IconVehicle = L.icon({
 })
 
 const IconPoint = L.icon({
-  iconUrl: require('../../assets/images/point-icon.png'),
-  iconRetinaUrl: require('../../assets/images/point-icon.png'),
+  iconUrl: require('../../assets/images/triangle.svg'),
+  iconRetinaUrl: require('../../assets/images/triangle.svg'),
+  shadowUrl: null,
+  shadowSize: null,
+  shadowAnchor: null,
+  iconSize: new L.Point(20, 20),
+  className: 'leaflet-venue-icon',
+})
+
+const IconPointRed = L.icon({
+  iconUrl: require('../../assets/images/point-icon-red.png'),
+  iconRetinaUrl: require('../../assets/images/point-icon-red.png'),
   shadowUrl: null,
   shadowSize: null,
   shadowAnchor: null,
@@ -20,4 +30,13 @@ const IconPoint = L.icon({
   className: 'leaflet-venue-icon',
 })
 
-export { IconVehicle, IconPoint }
+const IconPointGreen = L.icon({
+  iconUrl: require('../../assets/images/point-icon-green.png'),
+  iconRetinaUrl: require('../../assets/images/point-icon-green.png'),
+  shadowUrl: null,
+  shadowSize: null,
+  shadowAnchor: null,
+  iconSize: [20, 20],
+  className: 'leaflet-venue-icon',
+})
+export { IconVehicle, IconPoint, IconPointRed, IconPointGreen }
