@@ -50,10 +50,13 @@ export const Principal = () => {
         if (currentRec - 1 == 0) clearInterval(interval)
         return currentRec - 1
       })
+    if (currentRecord == 0) setCurrentRecord(history.length - 1)
+    
   }
 
   const nextRecord = () => {
-    if (currentRecord < history.length - 1) setCurrentRecord(currentRecord + 1)
+    if (currentRecord < history.length - 1) setCurrentRecord(currentRecord + 1);
+    if (currentRecord == history.length - 1) setCurrentRecord(0)
   }
 
   const playRecords = () => {
@@ -214,7 +217,7 @@ export const Principal = () => {
                           {record.data ? record.data.topic : ''}
                           {record?.data?.material && (
                             <div className="border-t">
-                              {record.data.material}
+                              Material: {record.data.material}
                             </div>
                           )}
                         </td>
