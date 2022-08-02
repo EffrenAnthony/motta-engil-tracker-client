@@ -2,7 +2,6 @@ import { useEffect, createRef } from 'react'
 import { MapContainer, TileLayer, CircleMarker } from 'react-leaflet'
 import { useMap } from 'react-leaflet/hooks'
 import { useLocations } from '../../context/locationsContext'
-import moment from 'moment'
 import LocationMarker from './LocationMarker'
 import { getTime } from './../../helpers/utils'
 
@@ -62,10 +61,13 @@ const MarkerList = ({
 
 const ChangeCenter = ({ center, zoom, vehicleSelected }) => {
   const map = useMap()
-  map.setView([
-    vehicleSelected ? center[0] - 0.005 : center[0],
-    vehicleSelected ? center[1] + 0.005 : center[1],
-  ])
+  map.setView(
+    [
+      vehicleSelected ? center[0] - 0.03 : center[0],
+      vehicleSelected ? center[1] + 0.005 : center[1],
+    ],
+    zoom
+  )
 }
 
 function MapView({

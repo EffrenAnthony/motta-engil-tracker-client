@@ -50,7 +50,7 @@ const MarkerList = ({ markers }) => {
   )
 }
 
-const ChangeCenter = ({ center, zoom, option }) => {
+const ChangeCenter = ({ center, zoom }) => {
   const map = useMap()
   map.setView(center, zoom)
   return null
@@ -80,10 +80,11 @@ export const Editor = () => {
   const {
     points,
     createPoint,
+    editPoint,
     deletePoint,
-    pickLine,
     lines,
     createLine,
+    editLine,
     deleteLine,
   } = usePointsLines()
 
@@ -144,7 +145,7 @@ export const Editor = () => {
     {
       title: 'Punto',
       dataIndex: 'name',
-      width: '20%',
+      width: '15%',
     },
     {
       title: 'Latitud',
@@ -159,9 +160,12 @@ export const Editor = () => {
     {
       title: 'Acción',
       dataIndex: 'operation',
-      width: '20%',
+      width: '25%',
       render: (_, elem) => (
-        <Button text="Delete" onClick={() => showConfirmDelete(elem.key)} />
+        <div className="flex gap-0">
+          <Button text="Editar" onClick={() => edit(elem)} />
+          <Button text="Eliminar" onClick={() => showConfirmDelete(elem.key)} />
+        </div>
       ),
     },
   ]
@@ -196,60 +200,138 @@ export const Editor = () => {
       dataIndex: 'operation',
       width: '20%',
       render: (_, elem) => (
-        <Button text="Delete" onClick={() => showConfirmDelete(elem.key)} />
+        <div className="flex gap-0">
+          <Button text="Editar" onClick={() => edit(elem)} />
+          <Button text="Eliminar" onClick={() => showConfirmDelete(elem.key)} />
+        </div>
       ),
     },
   ]
 
-  const createP = async () => {
-    if (point.name != '' && point.latitude != '' && point.longitude != '') {
-      await createPoint({
-        name: point.name,
-        latitude: point.latitude,
-        longitude: point.longitude,
-        color: color,
-        icon: point.icon,
-      })
+  const edit = data => {
+    if (option === 0)
       setPoint({
-        name: '',
-        latitude: '',
-        longitude: '',
-        icon: '',
+        id: data.key,
+        name: data.name,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        icon: data.icon,
       })
-      setColor(INITIAL_PICKER_COLOR)
-    } else message.warning('Completar los campos')
+    else
+      setLine({
+        id: data.key,
+        name: data.name,
+        latitudeStart: data.start.latitude,
+        latitudeEnd: data.end.latitude,
+        longitudeStart: data.start.longitude,
+        longitudeEnd: data.end.longitude,
+      })
+    setColor(data.color)
   }
 
-  const createL = async () => {
-    if (
-      line.name != '' &&
-      line.latitudeStart != '' &&
-      line.longitudeStart != '' &&
-      line.latitudeEnd != '' &&
-      line.longitudeEnd != ''
-    ) {
-      await createLine({
-        name: line.name,
-        start: {
-          latitude: line.latitudeStart,
-          longitude: line.longitudeStart,
-        },
-        end: {
-          latitude: line.latitudeEnd,
-          longitude: line.longitudeEnd,
-        },
-        color: color,
-        width: 2,
-      })
-      setLine({
-        name: '',
-        latitudeStart: '',
-        latitudeEnd: '',
-        longitudeStart: '',
-        longitudeEnd: '',
-      })
-      setColor(INITIAL_PICKER_COLOR)
-    } else message.warning('Completar los campos')
+  const savePoint = async () => {
+    if (point.id === undefined) {
+      if (point.name != '' && point.latitude != '' && point.longitude != '') {
+        await createPoint({
+          name: point.name,
+          latitude: point.latitude,
+          longitude: point.longitude,
+          color: color,
+          icon: point.icon,
+        })
+        setPoint({
+          name: '',
+          latitude: '',
+          longitude: '',
+          icon: '',
+        })
+        setColor(INITIAL_PICKER_COLOR)
+      } else message.warning('Completar los campos')
+    } else {
+      if (point.name != '' && point.latitude != '' && point.longitude != '') {
+        await editPoint({
+          name: point.name,
+          latitude: point.latitude,
+          longitude: point.longitude,
+          color: color,
+          icon: point.icon,
+          id: point.id,
+        })
+        setPoint({
+          name: '',
+          latitude: '',
+          longitude: '',
+          icon: '',
+          id: undefined,
+        })
+        setColor(INITIAL_PICKER_COLOR)
+      } else message.warning('Completar los campos')
+    }
+  }
+
+  const saveLine = async () => {
+    if (line.id === undefined) {
+      if (
+        line.name != '' &&
+        line.latitudeStart != '' &&
+        line.longitudeStart != '' &&
+        line.latitudeEnd != '' &&
+        line.longitudeEnd != ''
+      ) {
+        await createLine({
+          name: line.name,
+          start: {
+            latitude: line.latitudeStart,
+            longitude: line.longitudeStart,
+          },
+          end: {
+            latitude: line.latitudeEnd,
+            longitude: line.longitudeEnd,
+          },
+          color: color,
+          width: 2,
+        })
+        setLine({
+          name: '',
+          latitudeStart: '',
+          latitudeEnd: '',
+          longitudeStart: '',
+          longitudeEnd: '',
+        })
+        setColor(INITIAL_PICKER_COLOR)
+      } else message.warning('Completar los campos')
+    } else {
+      if (
+        line.name != '' &&
+        line.latitudeStart != '' &&
+        line.longitudeStart != '' &&
+        line.latitudeEnd != '' &&
+        line.longitudeEnd != ''
+      ) {
+        await editLine({
+          name: line.name,
+          start: {
+            latitude: line.latitudeStart,
+            longitude: line.longitudeStart,
+          },
+          end: {
+            latitude: line.latitudeEnd,
+            longitude: line.longitudeEnd,
+          },
+          color: color,
+          id: line.id,
+        })
+        setLine({
+          name: '',
+          latitudeStart: '',
+          latitudeEnd: '',
+          longitudeStart: '',
+          longitudeEnd: '',
+          id: undefined,
+        })
+        setColor(INITIAL_PICKER_COLOR)
+      } else message.warning('Completar los campos')
+    }
   }
 
   let x = -12.1045
@@ -274,10 +356,6 @@ export const Editor = () => {
 
   const showModal = () => {
     setIsModalVisible(true)
-  }
-
-  const handleOk = () => {
-    setIsModalVisible(false)
   }
 
   const handleCancel = () => {
@@ -438,7 +516,7 @@ export const Editor = () => {
             <div className="w-4/12 mr-5">
               <Button
                 text="Agregar"
-                onClick={option == 0 ? createP : createL}
+                onClick={option == 0 ? savePoint : saveLine}
                 type="primary"
                 style={{
                   marginBottom: 16,
@@ -504,6 +582,7 @@ export const Editor = () => {
                       key: elem.id,
                       latitude: elem.latitude,
                       longitude: elem.longitude,
+                      color: elem.color,
                     }
                   })
                 : lines.map(elem => {
@@ -514,6 +593,7 @@ export const Editor = () => {
                       longitude: elem.start.longitude,
                       latitude2: elem.end.latitude,
                       longitude2: elem.end.longitude,
+                      color: elem.color,
                     }
                   })
             }

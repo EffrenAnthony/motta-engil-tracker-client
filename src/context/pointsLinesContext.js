@@ -46,6 +46,23 @@ export const PointsLinesProvider = ({ children }) => {
     }
   }
 
+  const editPoint = async point => {
+    try {
+      const res = await http(
+        process.env.REACT_APP_BACK_URL + '/places/point/' + point.id,
+        'PUT',
+        point
+      )
+      if (res.msg == 'error') {
+        message.success('error')
+      } else {
+        message.success('Punto actualizado satisfactoriamente.')
+        getPoints()
+      }
+    } catch (e) {
+      console.log('catch', error)
+    }
+  }
   const createLine = async line => {
     try {
       const res = await http(
@@ -57,6 +74,24 @@ export const PointsLinesProvider = ({ children }) => {
         message.success('error')
       } else {
         message.success('Linea creada')
+        getLines()
+      }
+    } catch (e) {
+      console.log('catch', error)
+    }
+  }
+
+  const editLine = async line => {
+    try {
+      const res = await http(
+        process.env.REACT_APP_BACK_URL + '/places/line/' + line.id,
+        'PUT',
+        line
+      )
+      if (res.msg == 'error') {
+        message.success('error')
+      } else {
+        message.success('Linea actualizada satisfactoriamente')
         getLines()
       }
     } catch (e) {
@@ -154,6 +189,8 @@ export const PointsLinesProvider = ({ children }) => {
         updatePoint,
         updateLine,
         pickLine,
+        editPoint,
+        editLine,
       }}
     >
       {children}
