@@ -9,16 +9,18 @@ export const useUsers = () => useContext(UsersContext)
 export const UsersProvider = ({ children }) => {
   const [users, setUsers] = useState([])
   const getUsers = async () => {
-    const res = await http(process.env.REACT_APP_BACK_URL + '/user', 'GET')
-    setUsers(res.data.result)
+    const res = await http(process.env.REACT_APP_BACK_URL + '/app-users', 'GET')
+    console.log(res.data)
+
+    setUsers(res.data)
   }
 
   const createUser = async user => {
     try {
       const res = await http(
-        process.env.REACT_APP_BACK_URL + '/user',
+        process.env.REACT_APP_BACK_URL + '/app-users',
         'POST',
-        user
+        {...user, role: "app"}
       )
       if (res.msg == 'error') {
         message.error(res.data)
@@ -33,7 +35,7 @@ export const UsersProvider = ({ children }) => {
   const deleteUser = async id => {
     try {
       const res = await http(
-        process.env.REACT_APP_BACK_URL + '/user/' + id,
+        process.env.REACT_APP_BACK_URL + '/app-users/' + id,
         'DELETE'
       )
       if (res.msg == 'error') {
@@ -48,14 +50,14 @@ export const UsersProvider = ({ children }) => {
   }
   const updatePasswordUser = async user => {
     const res = await http(
-      process.env.REACT_APP_BACK_URL + '/user/' + user.id,
+      process.env.REACT_APP_BACK_URL + '/app-users/' + user.id,
       'PUT',
       user
     )
   }
   const updateUser = async user => {
     const res = await http(
-      process.env.REACT_APP_BACK_URL + '/user/' + user.id,
+      process.env.REACT_APP_BACK_URL + '/app-users/' + user.id,
       'PUT',
       user
     )

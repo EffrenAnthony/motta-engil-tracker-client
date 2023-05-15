@@ -13,24 +13,28 @@ export const AuthProvider = ({ children }) => {
   let navigate = useNavigate()
 
   const login = async data => {
-    const res = await http(
-      process.env.REACT_APP_BACK_URL + '/auth/login',
-      'POST',
-      data
-    )
-    if (!res.data) message.error('Hubo un error')
-    else {
-      const user = {
-        token: res.data.token,
-        id: res.data.user.id,
-        name: res.data.user.name,
-      }
-      setUserInfo(user)
-      localStorage.setItem('userInfo', JSON.stringify(user))
-      if (res.data.token) {
-        navigate('/principal')
-      }
-    }
+    // const res = await http(
+    //   process.env.REACT_APP_BACK_URL + '/auth/login',
+    //   'POST',
+    //   data
+    // )
+    // if (!res.data) message.error('Hubo un error')
+    // else {
+    //   const user = {
+    //     token: res.data.token,
+    //     id: res.data.user.id,
+    //     name: res.data.user.name,
+    //   }
+    //   setUserInfo(user)
+    //   localStorage.setItem('userInfo', JSON.stringify(user))
+    //   if (res.data.token) {
+    //     navigate('/principal')
+    //   }
+    // }
+
+
+    navigate('/principal')
+
   }
   const logout = () => {
     setUserInfo(undefined)

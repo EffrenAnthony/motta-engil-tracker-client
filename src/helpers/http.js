@@ -6,7 +6,7 @@ export const http = async (url, method, payload) => {
       'Content-Type': 'application/json',
       Authorization: token ? 'Bearer ' + token.token : undefined,
     },
-    body: payload ? JSON.stringify(payload) : undefined,
+    body: payload ? JSON.stringify({"data":payload}) : undefined,
   }
   try {
     const res = await fetch(url, requestOptions)

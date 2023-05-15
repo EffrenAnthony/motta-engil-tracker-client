@@ -109,7 +109,7 @@ export const Configuracion = () => {
           rowClassName={(_, index) => (index % 2 === 0 ? '' : 'bg-gray-100')}
           dataSource={loads.map(elem => {
             return {
-              name: elem.material,
+              name: elem.attributes.material,
               key: elem.id,
             }
           })}

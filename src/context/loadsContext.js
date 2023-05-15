@@ -10,7 +10,7 @@ export const LoadProvider = ({ children }) => {
   const [loads, setLoads] = useState([])
   const getLoads = async () => {
     const res = await http(process.env.REACT_APP_BACK_URL + '/loads', 'GET')
-    setLoads(res.data.result)
+    setLoads(res.data)
   }
 
   const createLoad = async load => {

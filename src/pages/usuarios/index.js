@@ -13,8 +13,8 @@ const columns = [
   {
     title: 'Nombre de usuario',
     width: 40,
-    dataIndex: 'user',
-    key: 'user',
+    dataIndex: 'name',
+    key: 'name',
   },
   {
     title: 'Fecha de creación',
@@ -29,9 +29,9 @@ const columns = [
     title: 'Restablecer contraseña',
     key: 'operation',
     width: 20,
-    render: ({ _id }) => (
+    render: ({ id }) => (
       <div className="w-5/12 m-auto flex items-center h-5">
-        <ModalEditPassword userId={_id} />
+        <ModalEditPassword userId={id} />
       </div>
     ),
   },
@@ -51,10 +51,10 @@ const columns = [
     title: 'Eliminar usuario',
     key: 'operation',
     width: 15,
-    render: ({ _id, name }) => {
+    render: ({ id, name }) => {
       return (
         <div className="w-5/12 m-auto flex items-center h-5">
-          <ModalDeleteUser userId={_id} userName={name} />
+          <ModalDeleteUser userId={id} userName={name} />
         </div>
       )
     },
@@ -63,7 +63,7 @@ const columns = [
 
 export const Usuarios = () => {
   const { users, getUsers } = useUsers()
-
+  console.log(users)
   useEffect(() => {
     getUsers()
   }, [])
@@ -85,9 +85,9 @@ export const Usuarios = () => {
         </div>
         <div className="mt-5">
           <Table
-            rowKey={record => record._id}
+            rowKey={record => record.id}
             columns={columns}
-            dataSource={users}
+            dataSource={users.map(item=>({...item.attributes, id:item.id}))}
             pagination={{
               hideOnSinglePage: true,
             }}
