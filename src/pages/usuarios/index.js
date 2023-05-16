@@ -9,66 +9,68 @@ import { ModalEditUser } from '../../common/ModalEditUser'
 import { ModalEditPassword } from '../../common/ModalEditPassword'
 
 const { Search } = Input
-const columns = [
-  {
-    title: 'Nombre de usuario',
-    width: 40,
-    dataIndex: 'user',
-    key: 'user',
-    // filteredValue:[''],
-    // onFilter:(value,record)=>{
-    //   return String(record.user).toLowerCase.includes(value.toLowerCase())
-    // }
-  },
-  {
-    title: 'Fecha de creación',
-    width: 25,
-    dataIndex: 'createdAt',
-    key: 'createdAt',
-    render: date => {
-      return new Date(date).toLocaleDateString('en-US') || '-'
-    },
-  },
-  {
-    title: 'Restablecer contraseña',
-    key: 'operation',
-    width: 20,
-    render: ({ id }) => (
-      <div className="w-5/12 m-auto flex items-center h-5">
-        <ModalEditPassword userId={id} />
-      </div>
-    ),
-  },
-  {
-    title: 'Editar',
-    key: 'operation',
-    width: 15,
-    render: user => {
-      return (
-        <div className="w-5/12 m-auto flex items-center h-5">
-          <ModalEditUser {...user} />
-        </div>
-      )
-    },
-  },
-  {
-    title: 'Eliminar usuario',
-    key: 'operation',
-    width: 15,
-    render: ({ id, name }) => {
-      return (
-        <div className="w-5/12 m-auto flex items-center h-5">
-          <ModalDeleteUser userId={id} userName={name} />
-        </div>
-      )
-    },
-  },
-]
+
 
 export const Usuarios = () => {
   const [searched,setSearched] = useState("")
   const { users, getUsers } = useUsers()
   console.log(users)
+
+  const columns = [
+    {
+      title: 'Nombre de usuario',
+      width: 40,
+      dataIndex: 'user',
+      key: 'user',
+      filteredValue:[searched],
+      onFilter:(value,record)=>{
+        return String(record.user).toLowerCase().includes(value.toLowerCase())
+      }
+    },
+    {
+      title: 'Fecha de creación',
+      width: 25,
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: date => {
+        return new Date(date).toLocaleDateString('en-US') || '-'
+      },
+    },
+    {
+      title: 'Restablecer contraseña',
+      key: 'operation',
+      width: 20,
+      render: ({ id }) => (
+        <div className="w-5/12 m-auto flex items-center h-5">
+          <ModalEditPassword userId={id} />
+        </div>
+      ),
+    },
+    {
+      title: 'Editar',
+      key: 'operation',
+      width: 15,
+      render: user => {
+        return (
+          <div className="w-5/12 m-auto flex items-center h-5">
+            <ModalEditUser {...user} />
+          </div>
+        )
+      },
+    },
+    {
+      title: 'Eliminar usuario',
+      key: 'operation',
+      width: 15,
+      render: ({ id, name }) => {
+        return (
+          <div className="w-5/12 m-auto flex items-center h-5">
+            <ModalDeleteUser userId={id} userName={name} />
+          </div>
+        )
+      },
+    },
+  ]
   useEffect(() => {
     getUsers()
   }, [])
@@ -78,7 +80,9 @@ export const Usuarios = () => {
     setSearched(e.target.value)
     console.log(e.target.value)
   }
+
   const data = users.map(item=>({...item.attributes, id:item.id}))
+
   return (
     <div>
       <div className="flex px-5 py-5 justify-between">
@@ -90,13 +94,14 @@ export const Usuarios = () => {
           <div className="w-9/12">
             <Input.Search
             placeholder="Escribe el usuario aquí" 
-            // onSearch={(value)=>{setSearched(value)}}
-            // onChange={searchTable(e)}
+
+            onSearch={(value)=>{setSearched(value)}}
+            onChange={(e)=>{searchTable(e)}}
             />
           </div>
-          <div className="ml-5 w-3/12">
+          {/* <div className="ml-5 w-3/12">
             <Button type="primary" text="Buscar" />
-          </div>
+          </div> */}
         </div>
         <div className="mt-5">
           <Table
