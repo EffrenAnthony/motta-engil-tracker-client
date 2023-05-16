@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Input } from 'antd'
 import { Table } from 'antd'
 import { ModalUser } from '../../common/ModalCreateUser'
@@ -13,8 +13,12 @@ const columns = [
   {
     title: 'Nombre de usuario',
     width: 40,
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'user',
+    key: 'user',
+    // filteredValue:[''],
+    // onFilter:(value,record)=>{
+    //   return String(record.user).toLowerCase.includes(value.toLowerCase())
+    // }
   },
   {
     title: 'Fecha de creación',
@@ -62,12 +66,19 @@ const columns = [
 ]
 
 export const Usuarios = () => {
+  const [searched,setSearched] = useState("")
   const { users, getUsers } = useUsers()
   console.log(users)
   useEffect(() => {
     getUsers()
   }, [])
 
+
+  const searchTable = (e)=>{
+    setSearched(e.target.value)
+    console.log(e.target.value)
+  }
+  const data = users.map(item=>({...item.attributes, id:item.id}))
   return (
     <div>
       <div className="flex px-5 py-5 justify-between">
@@ -77,7 +88,11 @@ export const Usuarios = () => {
       <div className="px-5">
         <div className="flex justify-between">
           <div className="w-9/12">
-            <Search placeholder="Escribe el usuario aquí" />
+            <Input.Search
+            placeholder="Escribe el usuario aquí" 
+            // onSearch={(value)=>{setSearched(value)}}
+            // onChange={searchTable(e)}
+            />
           </div>
           <div className="ml-5 w-3/12">
             <Button type="primary" text="Buscar" />
@@ -87,7 +102,7 @@ export const Usuarios = () => {
           <Table
             rowKey={record => record.id}
             columns={columns}
-            dataSource={users.map(item=>({...item.attributes, id:item.id}))}
+            dataSource={data}
             pagination={{
               hideOnSinglePage: true,
             }}

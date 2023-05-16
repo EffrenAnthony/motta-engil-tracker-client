@@ -54,6 +54,12 @@ export const UsersProvider = ({ children }) => {
       'PUT',
       user
     )
+    if (res.msg == 'error') {
+      message.error(res.data)
+    } else {
+      message.success('Password actualizado correctamente')
+      // getUsers()
+    }
   }
   const updateUser = async user => {
     const res = await http(

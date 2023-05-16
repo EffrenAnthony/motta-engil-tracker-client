@@ -7,7 +7,8 @@ import ICONEDIT from '../../assets/images/edit.svg'
 import { HexColorPicker } from 'react-colorful'
 import useClickOutside from '../../hooks/useClickOutside'
 
-export const ModalEditUser = ({ name, email, color, _id }) => {
+export const ModalEditUser = ({ user:userName, email, color, id }) => {
+  console.log({ userName, email, color, id })
   //color
   const popover = useRef()
   const [isOpen, toggle] = useState(false)
@@ -19,8 +20,9 @@ export const ModalEditUser = ({ name, email, color, _id }) => {
   //Modal
   const [visible, setVisible] = useState(false)
   const [confirmLoading, setConfirmLoading] = useState(false)
+  console.log(666,color)
   const [user, setUser] = useState({
-    name,
+    user:userName,
     color,
     email,
   })
@@ -40,20 +42,20 @@ export const ModalEditUser = ({ name, email, color, _id }) => {
   const submit = async () => {
     setConfirmLoading(true)
 
-    if (user.name != '' && user.email != '') {
+    if (user.user != '' && user.email != '') {
       await updateUser({
-        user: user.name,
+        user: user.user,
         email: user.email,
         color: user.color,
-        id: _id,
+        id: id,
       })
 
       setVisible(false)
       setConfirmLoading(false)
       setUser({
-        name,
-        color,
-        email,
+        user: user.user,
+        email: user.email,
+        color: user.color,
       })
     } else {
       message.warning('Por favor completar todos los campos')
@@ -88,9 +90,9 @@ export const ModalEditUser = ({ name, email, color, _id }) => {
             <div className="mr-3 w-1/2">
               <label>Usuario</label>
               <Input
-                value={user.name}
+                value={user.user}
                 onChange={event => {
-                  setUser({ ...user, name: event.target.value })
+                  setUser({ ...user, user: event.target.value })
                 }}
                 placeholder="Escribe el usuario aquí"
                 required
