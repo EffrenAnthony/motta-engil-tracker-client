@@ -65,7 +65,7 @@ export const LocationsProvider = ({ children }) => {
     res.data.forEach(r => {
       const order = [
         'carga',
-        'iniciarConduccion',
+        'inicioConduccion',
         'finConduccion',
         'descarga',
         'inicioRetorno',
@@ -74,14 +74,10 @@ export const LocationsProvider = ({ children }) => {
       const tmp = order.map(step => ({ ...r.attributes.data[step], step }))
       parseFormat = [...parseFormat, ...tmp]
     })
-    console.log(parseFormat)
-
     setHistory(parseFormat)
   }
   const pickVehicle = () => setVehicleSelected(true)
-  // useEffect(() => {
-  //   getVehicles()
-  // }, [])
+
   return (
     <LocationsContext.Provider
       value={{

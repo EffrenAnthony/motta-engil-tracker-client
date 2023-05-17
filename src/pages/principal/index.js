@@ -22,7 +22,7 @@ const { Option } = Select
 
 const STEP_NAMES = {
   carga: 'CARGA',
-  iniciarConduccion: 'INICIO CONDUCCION',
+  inicioConduccion: 'INICIO CONDUCCION',
   finConduccion: 'FIN CONDUCCION',
   descarga: 'DESCARGA',
   inicioRetorno: 'INICIO RETORNO',
@@ -43,12 +43,13 @@ export const Principal = () => {
     endHour: '',
   })
   const [currentRecord, setCurrentRecord] = useState(-1)
-  const { history, vehicleSelected, getVehicles, getHistory } = useLocations()
+  const { history, vehicleSelected, getVehicles, getHistory, vehicles } =
+    useLocations()
 
-  const options = users.map(user => {
+  const options = vehicles.map(user => {
     return {
-      label: user.name,
-      key: user._id,
+      label: user.username,
+      key: user.userid,
     }
   })
   const showFilter = () => {
@@ -209,7 +210,7 @@ export const Principal = () => {
       </div>
       <div className="flex justify-between grow overflow-hidden relative border-t border-gray-200">
         {vehicleSelected && (
-          <div className="w-3/12 h-full relative pb-8 flex flex-col">
+          <div className="w-4/12 h-full relative pb-8 flex flex-col">
             <div className="grow overflow-y-auto mb-6 max-h-full">
               <table className="table-auto w-full md:table-fixed text-center border-collapse  ">
                 <thead className="sticky top-0 bg-white border-b">

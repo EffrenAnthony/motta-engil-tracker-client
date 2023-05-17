@@ -13,7 +13,6 @@ const { Search } = Input
 export const Usuarios = () => {
   const [searched, setSearched] = useState('')
   const { users, getUsers } = useUsers()
-  console.log(users)
 
   const columns = [
     {
@@ -76,7 +75,6 @@ export const Usuarios = () => {
 
   const searchTable = e => {
     setSearched(e.target.value)
-    console.log(e.target.value)
   }
 
   const data = users.map(item => ({ ...item.attributes, id: item.id }))

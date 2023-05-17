@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { http } from '../helpers/http'
-import { useNavigate } from 'react-router-dom'
 import { message } from 'antd'
 
 const UsersContext = createContext(null)
@@ -9,9 +8,15 @@ export const useUsers = () => useContext(UsersContext)
 export const UsersProvider = ({ children }) => {
   const [users, setUsers] = useState([])
   const getUsers = async () => {
-    const res = await http(process.env.REACT_APP_BACK_URL + '/app-users', 'GET')
-
-    setUsers(res.data)
+    try {
+      const res = await http(
+        process.env.REACT_APP_BACK_URL + '/app-users',
+        'GET'
+      )
+      if (res.data) setUsers(res.data)
+    } catch (error) {
+      console.log('Error:', error)
+    }
   }
 
   const createUser = async user => {

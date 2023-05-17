@@ -39,7 +39,7 @@ const MarkerList = ({
             ...timeFilters,
           })
         }}
-        key={marker.id}
+        key={marker.userid}
         position={[
           marker.data.finRetorno.latitude || -16.4054894,
           marker.data.finRetorno.longitude || -71.5626081,
@@ -98,11 +98,11 @@ function MapView({
   }
 
   const center = [
-    vehicles[vehicles.length - 1]?.data?.finRetorno?.latitude ?? -16.39889,
-    vehicles[vehicles.length - 1]?.data?.finRetorno?.longitude ?? -71.535,
+    vehicles[vehicles.length - 1]?.data?.finRetorno?.latitude ?? -16.400590579,
+    vehicles[vehicles.length - 1]?.data?.finRetorno?.longitude ?? -71.536952998,
   ]
 
-  const zoom = 11
+  const zoom = 14
   return (
     <MapContainer
       ref={mapRef}

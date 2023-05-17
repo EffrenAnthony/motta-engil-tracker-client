@@ -30,7 +30,10 @@ const MarkerList = ({ markers }) => {
           marker.icon ? (
             <Marker
               key={marker.id}
-              position={[marker.attributes.latitude, marker.attributes.longitude]}
+              position={[
+                marker.attributes.latitude,
+                marker.attributes.longitude,
+              ]}
               icon={marker.icon}
             >
               <Tooltip sticky>{marker.attributes.name}</Tooltip>
@@ -88,7 +91,6 @@ export const Editor = () => {
     deleteLine,
   } = usePointsLines()
 
-
   const [point, setPoint] = useState({
     name: '',
     latitude: '',
@@ -99,13 +101,13 @@ export const Editor = () => {
 
   const [line, setLine] = useState({
     name: '',
-    start:{
-      latitude:'',
-      longitude: ''
+    start: {
+      latitude: '',
+      longitude: '',
     },
-    end:{
-      latitude:'',
-      longitude: ''
+    end: {
+      latitude: '',
+      longitude: '',
     },
     color: '#FF0000',
   })
@@ -241,7 +243,7 @@ export const Editor = () => {
           longitude: point.longitude,
           color: color,
           // icon: point.icon,
-          type: 'point'
+          type: 'point',
         })
         setPoint({
           name: '',
@@ -284,16 +286,16 @@ export const Editor = () => {
       ) {
         await createLine({
           name: line.name,
-          start: {...line.start},
-          end: {...line.end},
+          start: { ...line.start },
+          end: { ...line.end },
           color: color,
           width: 2,
-          type:'line'
+          type: 'line',
         })
         setLine({
           name: '',
-          start:{latitude: '',longitude:''},
-          end:{latitude:'',longitude:''}
+          start: { latitude: '', longitude: '' },
+          end: { latitude: '', longitude: '' },
         })
         setColor(INITIAL_PICKER_COLOR)
       } else message.warning('Completar los campos')
@@ -307,15 +309,15 @@ export const Editor = () => {
       ) {
         await editLine({
           name: line.name,
-          start: {...line.start},
-          end: {...line.end},
+          start: { ...line.start },
+          end: { ...line.end },
           color: color,
           id: line.id,
         })
         setLine({
           name: '',
-          start:{latitude: '',longitude:''},
-          end:{latitude:'',longitude:''},
+          start: { latitude: '', longitude: '' },
+          end: { latitude: '', longitude: '' },
           id: undefined,
         })
         setColor(INITIAL_PICKER_COLOR)
@@ -323,8 +325,8 @@ export const Editor = () => {
     }
   }
 
-  let x = -12.1045
-  let y = -77.036779
+  let x = -16.400590579
+  let y = -71.536952998
   if (option == 0 && points[points.length - 1])
     x = points[points.length - 1].attributes.latitude
 
@@ -337,7 +339,7 @@ export const Editor = () => {
   if (option == 1 && lines[lines.length - 1])
     y = lines[lines.length - 1].attributes?.end?.longitude
 
-  const zoom = 15
+  const zoom = 14
 
   //modal
 
@@ -458,7 +460,10 @@ export const Editor = () => {
                 onChange={event => {
                   option == 0
                     ? setPoint({ ...point, latitude: event.target.value })
-                    : setLine({ ...line, start:{...line.start,latitude: event.target.value} })
+                    : setLine({
+                        ...line,
+                        start: { ...line.start, latitude: event.target.value },
+                      })
                 }}
                 placeholder="Escribe latitud"
               />
@@ -470,7 +475,10 @@ export const Editor = () => {
                 onChange={event => {
                   option == 0
                     ? setPoint({ ...point, longitude: event.target.value })
-                    : setLine({ ...line, start:{...line.start,longitude: event.target.value} })
+                    : setLine({
+                        ...line,
+                        start: { ...line.start, longitude: event.target.value },
+                      })
                 }}
                 placeholder="Escribe longitud"
               />
@@ -484,7 +492,10 @@ export const Editor = () => {
                   type="text"
                   value={line.end.latitude}
                   onChange={event => {
-                    setLine({ ...line, end:{...line.end,latitude: event.target.value}})
+                    setLine({
+                      ...line,
+                      end: { ...line.end, latitude: event.target.value },
+                    })
                   }}
                   placeholder="Escribe latitud"
                 />
@@ -494,7 +505,10 @@ export const Editor = () => {
                 <Input
                   value={line.end.longitude}
                   onChange={event => {
-                    setLine({ ...line, end:{...line.end,longitude: event.target.value}})
+                    setLine({
+                      ...line,
+                      end: { ...line.end, longitude: event.target.value },
+                    })
                   }}
                   placeholder="Escribe longitud"
                 />
@@ -534,7 +548,11 @@ export const Editor = () => {
                 data={
                   option == 0
                     ? points.map(elem => {
-                        return [elem.attributes.name, elem.attributes.latitude, elem.attributes.longitude]
+                        return [
+                          elem.attributes.name,
+                          elem.attributes.latitude,
+                          elem.attributes.longitude,
+                        ]
                       })
                     : lines.map(elem => {
                         return [
