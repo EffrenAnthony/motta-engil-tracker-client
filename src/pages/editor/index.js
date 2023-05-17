@@ -208,13 +208,18 @@ export const Editor = () => {
       width: '20%',
       render: (_, elem) => (
         <div className="flex gap-0">
-          <Button text="Editar" onClick={() => edit({
-            color: elem.color,
-            name: elem.name,
-            start:{latitude: elem.latitude,longitude: elem.longitude},
-            end:{latitude: elem.latitude2,longitude: elem.longitude2},
-            key:elem.key
-            })} />
+          <Button
+            text="Editar"
+            onClick={() =>
+              edit({
+                color: elem.color,
+                name: elem.name,
+                start: { latitude: elem.latitude, longitude: elem.longitude },
+                end: { latitude: elem.latitude2, longitude: elem.longitude2 },
+                key: elem.key,
+              })
+            }
+          />
           <Button text="Eliminar" onClick={() => showConfirmDelete(elem.key)} />
         </div>
       ),
@@ -222,7 +227,6 @@ export const Editor = () => {
   ]
 
   const edit = data => {
-    console.log(data,7777)
     if (option === 0)
       setPoint({
         id: data.key,
@@ -283,7 +287,7 @@ export const Editor = () => {
   }
 
   const saveLine = async () => {
-    console.log(line,666)
+    console.log(line, 666)
     if (line.id === undefined) {
       if (
         line.name != '' &&
@@ -394,7 +398,7 @@ export const Editor = () => {
             <div className="w-5/12">
               <label>Ícono</label>
               <div className="flex justify-between gap-2 mb-1">
-                <div className="relative w-10/12">
+                <div className="relative w-full">
                   <Input
                     value={color}
                     onChange={e => {
@@ -408,7 +412,6 @@ export const Editor = () => {
                         style={{ backgroundColor: color }}
                         onClick={() => toggle(true)}
                       />
-
                       {isOpen && (
                         <div className="popover z-1000" ref={popover}>
                           <HexColorPicker
@@ -422,7 +425,7 @@ export const Editor = () => {
                     </div>
                   </div>
                 </div>
-                <div className="w-2/12">
+                {/* <div className="w-2/12">
                   <Button
                     type="primary"
                     text={
@@ -454,13 +457,13 @@ export const Editor = () => {
                       <Button type="primary" text={'Cargar'}></Button>
                     </div>
                   </Modal>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
           <div className="flex justify-around">
             <div className="w-5/12">
-              <label>Latitud</label>
+              <label>Latitud{option == 1 ? ' 1' : ''}</label>
               <Input
                 type="text"
                 value={option == 0 ? point.latitude : line.start.latitude}
@@ -476,7 +479,7 @@ export const Editor = () => {
               />
             </div>
             <div className="w-5/12">
-              <label>Longitud</label>
+              <label>Longitud{option == 1 ? ' 1' : ''}</label>
               <Input
                 value={option == 0 ? point.longitude : line.start.longitude}
                 onChange={event => {
@@ -494,7 +497,7 @@ export const Editor = () => {
           {option == 1 && (
             <div className="flex justify-around">
               <div className="w-5/12">
-                <label>Latitud</label>
+                <label>Latitud 2</label>
                 <Input
                   type="text"
                   value={line.end.latitude}
@@ -508,7 +511,7 @@ export const Editor = () => {
                 />
               </div>
               <div className="w-5/12">
-                <label>Longitud</label>
+                <label>Longitud 2</label>
                 <Input
                   value={line.end.longitude}
                   onChange={event => {

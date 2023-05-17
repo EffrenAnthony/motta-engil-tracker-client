@@ -7,7 +7,6 @@ import ICONDELETE from '../../assets/images/delete.svg'
 import { Modal } from 'antd'
 import React, { useState } from 'react'
 import { useLoads } from '../../context/loadsContext'
-import X from '../../assets/images/circle-x.png'
 
 const { confirm } = Modal
 //Fin tabla

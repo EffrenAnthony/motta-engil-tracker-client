@@ -62,12 +62,6 @@ export const ModalEditPassword = ({ userId }) => {
       >
         <h2 className="text-blue-500 text-3xl font-semibold">Usuarios</h2>
         <Form form={form} onFinish={submit}>
-          <p className="text-blue-500 font-semibold">Reestablecer contraseña</p>
-          <div className="flex justify-between mb-5">
-            <div className="mr-3 w-1/2">
-              <Button type="primary" text="Enviar correo" />
-            </div>
-          </div>
           <div>
             <Space direction="vertical">
               <div className="flex justify-between">
@@ -78,7 +72,7 @@ export const ModalEditPassword = ({ userId }) => {
                     onChange={event => {
                       setUser({ ...user, pass: event.target.value })
                     }}
-                    placeholder="input password"
+                    placeholder="Contraseña"
                     required
                   />
                 </div>
@@ -89,7 +83,7 @@ export const ModalEditPassword = ({ userId }) => {
                     onChange={event => {
                       setUser({ ...user, confirmPass: event.target.value })
                     }}
-                    placeholder="input password"
+                    placeholder="Repetir Contraseña"
                     required
                     iconRender={visible =>
                       visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
