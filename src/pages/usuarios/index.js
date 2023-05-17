@@ -66,19 +66,17 @@ const columns = [
 ]
 
 export const Usuarios = () => {
-  const [searched,setSearched] = useState("")
+  const [searched, setSearched] = useState('')
   const { users, getUsers } = useUsers()
-  console.log(users)
   useEffect(() => {
     getUsers()
   }, [])
 
-
-  const searchTable = (e)=>{
+  const searchTable = e => {
     setSearched(e.target.value)
     console.log(e.target.value)
   }
-  const data = users.map(item=>({...item.attributes, id:item.id}))
+  const data = users.map(item => ({ ...item.attributes, id: item.id }))
   return (
     <div>
       <div className="flex px-5 py-5 justify-between">
@@ -89,9 +87,9 @@ export const Usuarios = () => {
         <div className="flex justify-between">
           <div className="w-9/12">
             <Input.Search
-            placeholder="Escribe el usuario aquí" 
-            // onSearch={(value)=>{setSearched(value)}}
-            // onChange={searchTable(e)}
+              placeholder="Escribe el usuario aquí"
+              // onSearch={(value)=>{setSearched(value)}}
+              // onChange={searchTable(e)}
             />
           </div>
           <div className="ml-5 w-3/12">

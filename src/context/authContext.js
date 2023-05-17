@@ -13,28 +13,28 @@ export const AuthProvider = ({ children }) => {
   let navigate = useNavigate()
 
   const login = async data => {
-    // const res = await http(
-    //   process.env.REACT_APP_BACK_URL + '/auth/login',
-    //   'POST',
-    //   data
-    // )
-    // if (!res.data) message.error('Hubo un error')
-    // else {
-    //   const user = {
-    //     token: res.data.token,
-    //     id: res.data.user.id,
-    //     name: res.data.user.name,
-    //   }
-    //   setUserInfo(user)
-    //   localStorage.setItem('userInfo', JSON.stringify(user))
-    //   if (res.data.token) {
-    //     navigate('/principal')
-    //   }
-    // }
-
-
-    navigate('/principal')
-
+    try {
+      const res = await http(
+        process.env.REACT_APP_BACK_URL +
+          `/app-users?filters[user][$eq]=${data.user}&filters[pass][$eq]=${data.pass}&filters[role][$eq]=web`,
+        'GET'
+      )
+      if (res.data.length == 0)
+        message.error('Hubo un error con las credenciales')
+      else {
+        const user = {
+          id: res.data[0].id,
+          name: res.data[0].attributes.name,
+          email: res.data[0].attributes.email,
+          user: res.data[0].attributes.user,
+        }
+        setUserInfo(user)
+        localStorage.setItem('userInfo', JSON.stringify(user))
+        if (res.data[0].id) navigate('/principal')
+      }
+    } catch (error) {
+      message.error('Hubo un error con las credenciales')
+    }
   }
   const logout = () => {
     setUserInfo(undefined)

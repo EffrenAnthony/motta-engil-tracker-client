@@ -13,13 +13,26 @@ export const LocationsProvider = ({ children }) => {
   const [history, setHistory] = useState([])
   const [vehicleSelected, setVehicleSelected] = useState(false)
 
+  const fillVehiclesLastRecord = data => {
+    const obj = {}
+    data.forEach(v => {
+      if (!obj[v.attributes.userid]) obj[v.attributes.userid] = v.attributes
+    })
+    return Object.values(obj)
+  }
+
   const getVehicles = async ({ userId }) => {
-    let params = userId ? 'filter=userId:' + userId : ''
-    const res = await http(
-      process.env.REACT_APP_BACK_URL + '/location/tracker?' + params,
-      'GET'
-    )
-    setVehicles(res.data.result)
+    let filterUserId = userId ? '&filters[userId][$eq]=' + userId : ''
+    try {
+      const res = await http(
+        process.env.REACT_APP_BACK_URL +
+          `/locations?sort=timestamp:desc${filterUserId}`, // id
+        'GET'
+      )
+      setVehicles(fillVehiclesLastRecord(res.data))
+    } catch (error) {
+      console.log('Error: ', error)
+    }
   }
   const getHistory = async ({
     userId,
@@ -28,31 +41,42 @@ export const LocationsProvider = ({ children }) => {
     startHour,
     endHour,
   }) => {
-    const timestart = moment({
-      years: startDate.getFullYear(),
-      months: startDate.getMonth(),
-      date: startDate.getDate(),
-      hours: startHour.split(':')[0],
-      minutes: startHour.split(':')[1],
-    }).format()
-    const timeEnd = moment({
-      years: endDate.getFullYear(),
-      months: endDate.getMonth(),
-      date: endDate.getDate(),
-      hours: endHour.split(':')[0],
-      minutes: endHour.split(':')[1],
-    }).format()
-    const result = await http(
+    const timeStart = new Date(
+      `${
+        startDate.getMonth() + 1
+      }/${startDate.getDate()}/${startDate.getFullYear()} ${
+        startHour.split(':')[0]
+      }:${startHour.split(':')[1]}`
+    ).getTime()
+    const timeEnd = new Date(
+      `${
+        endDate.getMonth() + 1
+      }/${endDate.getDate()}/${endDate.getFullYear()} ${
+        endHour.split(':')[0]
+      }:${endHour.split(':')[1]}`
+    ).getTime()
+    const res = await http(
       process.env.REACT_APP_BACK_URL +
-        '/location?filter=userId:' +
-        userId +
-        '&start=' +
-        timestart +
-        '&end=' +
-        timeEnd,
+        `/locations?filters[userid][$eq]=${userId}&filters[timestamp][$gte]=${timeStart}&filters[timestamp][$lte]=${timeEnd}`,
       'GET'
     )
-    setHistory(result.data.result)
+
+    let parseFormat = []
+    res.data.forEach(r => {
+      const order = [
+        'carga',
+        'iniciarConduccion',
+        'finConduccion',
+        'descarga',
+        'inicioRetorno',
+        'finRetorno',
+      ]
+      const tmp = order.map(step => ({ ...r.attributes.data[step], step }))
+      parseFormat = [...parseFormat, ...tmp]
+    })
+    console.log(parseFormat)
+
+    setHistory(parseFormat)
   }
   const pickVehicle = () => setVehicleSelected(true)
   // useEffect(() => {
