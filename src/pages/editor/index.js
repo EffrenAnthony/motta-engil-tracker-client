@@ -30,19 +30,19 @@ const MarkerList = ({ markers }) => {
           marker.icon ? (
             <Marker
               key={marker.id}
-              position={[marker.latitude, marker.longitude]}
+              position={[marker.attributes.latitude, marker.attributes.longitude]}
               icon={marker.icon}
             >
-              <Tooltip sticky>{marker.name}</Tooltip>
+              <Tooltip sticky>{marker.attributes.name}</Tooltip>
             </Marker>
           ) : (
             <CircleMarker
               key={marker.id}
-              center={[marker.latitude, marker.longitude]}
-              pathOptions={{ color: marker.color, weight: 12 }}
+              center={[marker.attributes.latitude, marker.attributes.longitude]}
+              pathOptions={{ color: marker.attributes.color, weight: 12 }}
               radius={6}
             >
-              <Tooltip sticky>{marker.name}</Tooltip>
+              <Tooltip sticky>{marker.attributes.name}</Tooltip>
             </CircleMarker>
           )
         )}
@@ -64,12 +64,12 @@ const LinesList = ({ lines }) => {
           <Polyline
             key={line.id}
             positions={[
-              [line.start.latitude, line.start.longitude],
-              [line.end.latitude, line.end.longitude],
+              [line.attributes.start.latitude, line.attributes.start.longitude],
+              [line.attributes.end.latitude, line.attributes.end.longitude],
             ]}
-            pathOptions={{ color: line.color }}
+            pathOptions={{ color: line.attributes.color }}
           >
-            <Tooltip sticky>{line.name}</Tooltip>
+            <Tooltip sticky>{line.attributes.name}</Tooltip>
           </Polyline>
         ))}
     </>
@@ -87,6 +87,7 @@ export const Editor = () => {
     editLine,
     deleteLine,
   } = usePointsLines()
+
 
   const [point, setPoint] = useState({
     name: '',
@@ -337,16 +338,16 @@ export const Editor = () => {
   let x = -12.1045
   let y = -77.036779
   if (option == 0 && points[points.length - 1])
-    x = points[points.length - 1].latitude
+    x = points[points.length - 1].attributes.latitude
 
   if (option == 1 && lines[lines.length - 1])
-    x = lines[lines.length - 1]?.start?.latitude
+    x = lines[lines.length - 1].attributes?.start?.latitude
 
   if (option == 0 && points[points.length - 1])
-    y = points[points.length - 1].longitude
+    y = points[points.length - 1].attributes.longitude
 
   if (option == 1 && lines[lines.length - 1])
-    y = lines[lines.length - 1]?.end?.longitude
+    y = lines[lines.length - 1].attributes?.end?.longitude
 
   const zoom = 15
 
@@ -361,6 +362,7 @@ export const Editor = () => {
   const handleCancel = () => {
     setIsModalVisible(false)
   }
+  console.log(1,points,2,lines)
 
   return (
     <div className="w-full h-screen flex flex-col">
@@ -465,7 +467,7 @@ export const Editor = () => {
               <label>Latitud</label>
               <Input
                 type="text"
-                value={option == 0 ? point.latitude : line.latitudeStart}
+                value={option == 0 ? point.latitude : line.attributes.latitudeStart}
                 onChange={event => {
                   option == 0
                     ? setPoint({ ...point, latitude: event.target.value })
@@ -545,15 +547,15 @@ export const Editor = () => {
                 data={
                   option == 0
                     ? points.map(elem => {
-                        return [elem.name, elem.latitude, elem.longitude]
+                        return [elem.attributes.name, elem.attributes.latitude, elem.attributes.longitude]
                       })
                     : lines.map(elem => {
                         return [
-                          elem.name,
-                          elem.start.latitude,
-                          elem.start.longitude,
-                          elem.end.latitude,
-                          elem.end.longitude,
+                          elem.attributes.name,
+                          elem.attributes.start.latitude,
+                          elem.attributes.start.longitude,
+                          elem.attributes.end.latitude,
+                          elem.attributes.end.longitude,
                         ]
                       })
                 }
@@ -578,22 +580,22 @@ export const Editor = () => {
               option == 0
                 ? points.map(elem => {
                     return {
-                      name: elem.name,
+                      name: elem.attributes.name,
                       key: elem.id,
-                      latitude: elem.latitude,
-                      longitude: elem.longitude,
-                      color: elem.color,
+                      latitude: elem.attributes.latitude,
+                      longitude: elem.attributes.longitude,
+                      color: elem.attributes.color,
                     }
                   })
                 : lines.map(elem => {
                     return {
-                      name: elem.name,
+                      name: elem.attributes.name,
                       key: elem.id,
-                      latitude: elem.start.latitude,
-                      longitude: elem.start.longitude,
-                      latitude2: elem.end.latitude,
-                      longitude2: elem.end.longitude,
-                      color: elem.color,
+                      latitude: elem.attributes.start.latitude,
+                      longitude: elem.attributes.start.longitude,
+                      latitude2: elem.attributes.end.latitude,
+                      longitude2: elem.attributes.end.longitude,
+                      color: elem.attributes.color,
                     }
                   })
             }

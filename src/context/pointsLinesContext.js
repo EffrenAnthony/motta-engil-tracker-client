@@ -13,25 +13,25 @@ export const PointsLinesProvider = ({ children }) => {
 
   const getPoints = async () => {
     const res = await http(
-      process.env.REACT_APP_BACK_URL + '/places/?filter=type:point',
+      process.env.REACT_APP_BACK_URL + '/points/?filters[type][$eq]=point',
       'GET'
     )
-    setPoints(res.data.result)
+    setPoints(res.data)
   }
 
   const getLines = async () => {
     const res = await http(
-      process.env.REACT_APP_BACK_URL + '/places/?filter=type:line',
+      process.env.REACT_APP_BACK_URL + '/points/?filters[type][$eq]=line',
       'GET'
     )
 
-    setLines(res.data.result)
+    setLines(res.data)
   }
 
   const createPoint = async point => {
     try {
       const res = await http(
-        process.env.REACT_APP_BACK_URL + '/places/point',
+        process.env.REACT_APP_BACK_URL + '/points/point',
         'POST',
         point
       )
@@ -49,7 +49,7 @@ export const PointsLinesProvider = ({ children }) => {
   const editPoint = async point => {
     try {
       const res = await http(
-        process.env.REACT_APP_BACK_URL + '/places/point/' + point.id,
+        process.env.REACT_APP_BACK_URL + '/points/point/' + point.id,
         'PUT',
         point
       )
@@ -66,7 +66,7 @@ export const PointsLinesProvider = ({ children }) => {
   const createLine = async line => {
     try {
       const res = await http(
-        process.env.REACT_APP_BACK_URL + '/places/line',
+        process.env.REACT_APP_BACK_URL + '/points/line',
         'POST',
         line
       )
