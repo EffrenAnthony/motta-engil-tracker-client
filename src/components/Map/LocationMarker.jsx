@@ -13,6 +13,7 @@ const LocationMarker = ({
   onClickVehicle,
   isHistory,
   user,
+  timestamp,
   color,
   current,
   isLast,
@@ -30,7 +31,11 @@ const LocationMarker = ({
         },
       }}
     >
-      <Tooltip>{user}</Tooltip>
+      <Tooltip>
+        {user}
+        <br />
+        {timestamp && new Date(timestamp * 1).toString()}
+      </Tooltip>
     </CircleMarker>
   ) : (
     <Marker

@@ -10,9 +10,8 @@ import { ModalEditPassword } from '../../common/ModalEditPassword'
 
 const { Search } = Input
 
-
 export const Usuarios = () => {
-  const [searched,setSearched] = useState("")
+  const [searched, setSearched] = useState('')
   const { users, getUsers } = useUsers()
   console.log(users)
 
@@ -22,10 +21,10 @@ export const Usuarios = () => {
       width: 40,
       dataIndex: 'user',
       key: 'user',
-      filteredValue:[searched],
-      onFilter:(value,record)=>{
+      filteredValue: [searched],
+      onFilter: (value, record) => {
         return String(record.user).toLowerCase().includes(value.toLowerCase())
-      }
+      },
     },
     {
       title: 'Fecha de creación',
@@ -75,13 +74,12 @@ export const Usuarios = () => {
     getUsers()
   }, [])
 
-
-  const searchTable = (e)=>{
+  const searchTable = e => {
     setSearched(e.target.value)
     console.log(e.target.value)
   }
 
-  const data = users.map(item=>({...item.attributes, id:item.id}))
+  const data = users.map(item => ({ ...item.attributes, id: item.id }))
 
   return (
     <div>
@@ -93,10 +91,13 @@ export const Usuarios = () => {
         <div className="flex justify-between">
           <div className="w-9/12">
             <Input.Search
-            placeholder="Escribe el usuario aquí" 
-
-            onSearch={(value)=>{setSearched(value)}}
-            onChange={(e)=>{searchTable(e)}}
+              placeholder="Escribe el usuario aquí"
+              onSearch={value => {
+                setSearched(value)
+              }}
+              onChange={e => {
+                searchTable(e)
+              }}
             />
           </div>
           {/* <div className="ml-5 w-3/12">

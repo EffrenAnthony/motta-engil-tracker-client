@@ -7,8 +7,7 @@ import ICONEDIT from '../../assets/images/edit.svg'
 import { HexColorPicker } from 'react-colorful'
 import useClickOutside from '../../hooks/useClickOutside'
 
-export const ModalEditUser = ({ user:userName, email, color, id }) => {
-  console.log({ userName, email, color, id })
+export const ModalEditUser = ({ user: userName, email, color, id }) => {
   //color
   const popover = useRef()
   const [isOpen, toggle] = useState(false)
@@ -20,9 +19,8 @@ export const ModalEditUser = ({ user:userName, email, color, id }) => {
   //Modal
   const [visible, setVisible] = useState(false)
   const [confirmLoading, setConfirmLoading] = useState(false)
-  console.log(666,color)
   const [user, setUser] = useState({
-    user:userName,
+    user: userName,
     color,
     email,
   })

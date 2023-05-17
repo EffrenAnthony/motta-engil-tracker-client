@@ -10,7 +10,6 @@ export const UsersProvider = ({ children }) => {
   const [users, setUsers] = useState([])
   const getUsers = async () => {
     const res = await http(process.env.REACT_APP_BACK_URL + '/app-users', 'GET')
-    console.log(res.data)
 
     setUsers(res.data)
   }
@@ -20,7 +19,7 @@ export const UsersProvider = ({ children }) => {
       const res = await http(
         process.env.REACT_APP_BACK_URL + '/app-users',
         'POST',
-        {...user, role: "app"}
+        { ...user, role: 'app' }
       )
       if (res.msg == 'error') {
         message.error(res.data)

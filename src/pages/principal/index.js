@@ -1,7 +1,7 @@
 import { DownOutlined } from '@ant-design/icons'
 import { Select, Dropdown, Menu, Space } from 'antd'
 import { Button } from '../../common/Button'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useState } from 'react'
 import MapView from '../../components/Map/MapView'
 import DatePicker from 'react-datepicker'
@@ -10,6 +10,7 @@ import 'leaflet/dist/leaflet.css'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useLocations } from '../../context/locationsContext'
 import ICONPLAY from '../../assets/images/play.png'
+import ICONSTOP from '../../assets/images/stop.svg'
 import ICONARROWLEFT from '../../assets/images/arrow-left.png'
 import ICONARROWRIGHT from '../../assets/images/arrow-right.png'
 import ICONARROWTOP from '../../assets/images/arrow-top.png'
@@ -19,10 +20,20 @@ import { getTime, hours } from '../../helpers/utils'
 
 const { Option } = Select
 
+const STEP_NAMES = {
+  carga: 'CARGA',
+  iniciarConduccion: 'INICIO CONDUCCION',
+  finConduccion: 'FIN CONDUCCION',
+  descarga: 'DESCARGA',
+  inicioRetorno: 'INICIO RETORNO',
+  finRetorno: 'FIN RETORNO',
+}
+
 export const Principal = () => {
-  let interval
+  const refInterval = useRef()
   const [showFilters, setShowfilters] = useState(false)
   const { users, getUsers } = useUsers()
+  const [isPlaying, setIsPlaying] = useState(false)
   const [filters, setFilters] = useState({
     userName: '',
     userId: '',
@@ -51,18 +62,23 @@ export const Principal = () => {
         return currentRec - 1
       })
     if (currentRecord == 0) setCurrentRecord(history.length - 1)
-    
   }
 
   const nextRecord = () => {
-    if (currentRecord < history.length - 1) setCurrentRecord(currentRecord + 1);
+    if (currentRecord < history.length - 1) setCurrentRecord(currentRecord + 1)
     if (currentRecord == history.length - 1) setCurrentRecord(0)
   }
 
   const playRecords = () => {
-    interval = setInterval(() => {
-      prevRecord()
-    }, 2000)
+    if (!isPlaying) {
+      setIsPlaying(true)
+      refInterval.current = setInterval(() => {
+        prevRecord()
+      }, 2000)
+    } else {
+      setIsPlaying(false)
+      clearInterval(refInterval.current)
+    }
   }
   // Map
   // tabla
@@ -204,20 +220,30 @@ export const Principal = () => {
                 </thead>
                 <tbody className=" divide-y border-b">
                   {history.map((record, pos) => {
-                    const time = new Date(record.createdAt)
+                    const time = new Date(record.timestamp * 1)
                     return (
                       <tr
                         className={`divide-x ${
                           pos === currentRecord ? 'bg-green-50' : ''
                         }`}
-                        key={record._id}
+                        key={pos}
                       >
                         <td className="">{getTime(time)}</td>
                         <td className="center">
-                          {record.data ? record.data.topic : ''}
-                          {record?.data?.material && (
+                          {record.step && `${STEP_NAMES[record.step]}\n`}
+                          {record.START && (
                             <div className="border-t">
-                              Material: {record.data.material}
+                              {`Inicio: ${record.START}`}
+                            </div>
+                          )}
+                          {record.END && (
+                            <div className="border-t">
+                              {`Termino: ${record.END}`}
+                            </div>
+                          )}
+                          {record.MATERIAL && (
+                            <div className="border-t">
+                              Material: {record.MATERIAL}
                             </div>
                           )}
                         </td>
@@ -238,7 +264,11 @@ export const Principal = () => {
                 className="bg-blue-500 px-2 py-2 rounded-full  h-9 w-9 flex justify-center items-center cursor-pointer"
                 onClick={playRecords}
               >
-                <img className="w-2" src={ICONPLAY} />
+                {!isPlaying ? (
+                  <img className="w-2" src={ICONPLAY} />
+                ) : (
+                  <img className="w-2" src={ICONSTOP} />
+                )}
               </div>
               <div
                 className="bg-blue-500 px-2 py-2 rounded-full  h-9 w-9 flex justify-center items-center cursor-pointer"
