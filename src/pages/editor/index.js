@@ -206,7 +206,13 @@ export const Editor = () => {
       width: '20%',
       render: (_, elem) => (
         <div className="flex gap-0">
-          <Button text="Editar" onClick={() => edit(elem)} />
+          <Button text="Editar" onClick={() => edit({
+            color: elem.color,
+            name: elem.name,
+            start:{latitude: elem.latitude,longitude: elem.longitude},
+            end:{latitude: elem.latitude2,longitude: elem.longitude2},
+            key:elem.key
+            })} />
           <Button text="Eliminar" onClick={() => showConfirmDelete(elem.key)} />
         </div>
       ),
@@ -214,20 +220,21 @@ export const Editor = () => {
   ]
 
   const edit = data => {
+    console.log(data,7777)
     if (option === 0)
       setPoint({
         id: data.key,
-        name: data.attribute.name,
-        latitude: data.attribute.latitude,
-        longitude: data.attribute.longitude,
-        icon: data.attribute.icon,
+        name: data.name,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        icon: data.icon,
       })
     else
       setLine({
         id: data.key,
-        name: data.attribute.name,
-        start: data.attribute.start,
-        end: data.attribute.end,
+        name: data.name,
+        start: data.start,
+        end: data.end,
       })
     setColor(data.color)
   }
@@ -274,6 +281,7 @@ export const Editor = () => {
   }
 
   const saveLine = async () => {
+    console.log(line,666)
     if (line.id === undefined) {
       if (
         line.name != '' &&
@@ -300,7 +308,7 @@ export const Editor = () => {
     } else {
       if (
         line.name != '' &&
-        lline.start.latitude != '' &&
+        line.start.latitude != '' &&
         line.start.longitude != '' &&
         line.end.latitude != '' &&
         line.end.longitude != ''
@@ -350,7 +358,6 @@ export const Editor = () => {
   const handleCancel = () => {
     setIsModalVisible(false)
   }
-
   return (
     <div className="w-full h-screen flex flex-col">
       <div className="flex justify-start items-center content-center">

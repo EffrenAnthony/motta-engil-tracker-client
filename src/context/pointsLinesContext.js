@@ -49,7 +49,7 @@ export const PointsLinesProvider = ({ children }) => {
   const editPoint = async point => {
     try {
       const res = await http(
-        process.env.REACT_APP_BACK_URL + '/points/point/' + point.id,
+        process.env.REACT_APP_BACK_URL + '/points/' + point.id,
         'PUT',
         point
       )
@@ -84,7 +84,7 @@ export const PointsLinesProvider = ({ children }) => {
   const editLine = async line => {
     try {
       const res = await http(
-        process.env.REACT_APP_BACK_URL + '/places/line/' + line.id,
+        process.env.REACT_APP_BACK_URL + '/points/' + line.id,
         'PUT',
         line
       )
@@ -102,7 +102,7 @@ export const PointsLinesProvider = ({ children }) => {
   const deletePoint = async point => {
     try {
       const res = await http(
-        process.env.REACT_APP_BACK_URL + '/places/point/' + point,
+        process.env.REACT_APP_BACK_URL + '/points/' + point,
         'DELETE'
       )
       if (res.msg == 'error') {
@@ -119,7 +119,7 @@ export const PointsLinesProvider = ({ children }) => {
   const deleteLine = async line => {
     try {
       const res = await http(
-        process.env.REACT_APP_BACK_URL + '/places/line/' + line,
+        process.env.REACT_APP_BACK_URL + '/points/' + line,
         'DELETE'
       )
       if (res.msg == 'error') {
@@ -133,41 +133,6 @@ export const PointsLinesProvider = ({ children }) => {
     }
   }
 
-  const updatePoint = async point => {
-    try {
-      const res = await http(
-        process.env.REACT_APP_BACK_URL + '/places/point/' + point,
-        'PUT',
-        point
-      )
-      if (res.msg == 'error') {
-        message.success(res.data)
-      } else {
-        message.success('Punto actualizado')
-        getPoints()
-      }
-    } catch (e) {
-      console.log('catch', error)
-    }
-  }
-
-  const updateLine = async line => {
-    try {
-      const res = await http(
-        process.env.REACT_APP_BACK_URL + '/places/line/' + line.id,
-        'PUT',
-        line
-      )
-      if (res.msg == 'error') {
-        message.success(res.data)
-      } else {
-        message.success('Linea actualizad')
-        getLines()
-      }
-    } catch (e) {
-      console.log('catch', error)
-    }
-  }
 
   const pickLine = () => setPointSelected(false)
 
@@ -186,8 +151,6 @@ export const PointsLinesProvider = ({ children }) => {
         createLine,
         deletePoint,
         deleteLine,
-        updatePoint,
-        updateLine,
         pickLine,
         editPoint,
         editLine,
