@@ -31,7 +31,7 @@ export const PointsLinesProvider = ({ children }) => {
   const createPoint = async point => {
     try {
       const res = await http(
-        process.env.REACT_APP_BACK_URL + '/points/point',
+        process.env.REACT_APP_BACK_URL + '/points',
         'POST',
         point
       )
@@ -66,7 +66,7 @@ export const PointsLinesProvider = ({ children }) => {
   const createLine = async line => {
     try {
       const res = await http(
-        process.env.REACT_APP_BACK_URL + '/points/line',
+        process.env.REACT_APP_BACK_URL + '/points',
         'POST',
         line
       )

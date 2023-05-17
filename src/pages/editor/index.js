@@ -99,10 +99,14 @@ export const Editor = () => {
 
   const [line, setLine] = useState({
     name: '',
-    latitudeStart: '',
-    latitudeEnd: '',
-    longitudeStart: '',
-    longitudeEnd: '',
+    start:{
+      latitude:'',
+      longitude: ''
+    },
+    end:{
+      latitude:'',
+      longitude: ''
+    },
     color: '#FF0000',
   })
 
@@ -213,19 +217,17 @@ export const Editor = () => {
     if (option === 0)
       setPoint({
         id: data.key,
-        name: data.name,
-        latitude: data.latitude,
-        longitude: data.longitude,
-        icon: data.icon,
+        name: data.attribute.name,
+        latitude: data.attribute.latitude,
+        longitude: data.attribute.longitude,
+        icon: data.attribute.icon,
       })
     else
       setLine({
         id: data.key,
-        name: data.name,
-        latitudeStart: data.start.latitude,
-        latitudeEnd: data.end.latitude,
-        longitudeStart: data.start.longitude,
-        longitudeEnd: data.end.longitude,
+        name: data.attribute.name,
+        start: data.attribute.start,
+        end: data.attribute.end,
       })
     setColor(data.color)
   }
@@ -238,7 +240,8 @@ export const Editor = () => {
           latitude: point.latitude,
           longitude: point.longitude,
           color: color,
-          icon: point.icon,
+          // icon: point.icon,
+          type: 'point'
         })
         setPoint({
           name: '',
@@ -255,7 +258,7 @@ export const Editor = () => {
           latitude: point.latitude,
           longitude: point.longitude,
           color: color,
-          icon: point.icon,
+          // icon: point.icon,
           id: point.id,
         })
         setPoint({
@@ -274,60 +277,45 @@ export const Editor = () => {
     if (line.id === undefined) {
       if (
         line.name != '' &&
-        line.latitudeStart != '' &&
-        line.longitudeStart != '' &&
-        line.latitudeEnd != '' &&
-        line.longitudeEnd != ''
+        line.latitude != '' &&
+        line.start.longitude != '' &&
+        line.end.latitude != '' &&
+        line.end.longitude != ''
       ) {
         await createLine({
           name: line.name,
-          start: {
-            latitude: line.latitudeStart,
-            longitude: line.longitudeStart,
-          },
-          end: {
-            latitude: line.latitudeEnd,
-            longitude: line.longitudeEnd,
-          },
+          start: {...line.start},
+          end: {...line.end},
           color: color,
           width: 2,
+          type:'line'
         })
         setLine({
           name: '',
-          latitudeStart: '',
-          latitudeEnd: '',
-          longitudeStart: '',
-          longitudeEnd: '',
+          start:{latitude: '',longitude:''},
+          end:{latitude:'',longitude:''}
         })
         setColor(INITIAL_PICKER_COLOR)
       } else message.warning('Completar los campos')
     } else {
       if (
         line.name != '' &&
-        line.latitudeStart != '' &&
-        line.longitudeStart != '' &&
-        line.latitudeEnd != '' &&
-        line.longitudeEnd != ''
+        lline.start.latitude != '' &&
+        line.start.longitude != '' &&
+        line.end.latitude != '' &&
+        line.end.longitude != ''
       ) {
         await editLine({
           name: line.name,
-          start: {
-            latitude: line.latitudeStart,
-            longitude: line.longitudeStart,
-          },
-          end: {
-            latitude: line.latitudeEnd,
-            longitude: line.longitudeEnd,
-          },
+          start: {...line.start},
+          end: {...line.end},
           color: color,
           id: line.id,
         })
         setLine({
           name: '',
-          latitudeStart: '',
-          latitudeEnd: '',
-          longitudeStart: '',
-          longitudeEnd: '',
+          start:{latitude: '',longitude:''},
+          end:{latitude:'',longitude:''},
           id: undefined,
         })
         setColor(INITIAL_PICKER_COLOR)
@@ -362,7 +350,6 @@ export const Editor = () => {
   const handleCancel = () => {
     setIsModalVisible(false)
   }
-  console.log(1,points,2,lines)
 
   return (
     <div className="w-full h-screen flex flex-col">
@@ -467,11 +454,11 @@ export const Editor = () => {
               <label>Latitud</label>
               <Input
                 type="text"
-                value={option == 0 ? point.latitude : line.attributes.latitudeStart}
+                value={option == 0 ? point.latitude : line.start.latitude}
                 onChange={event => {
                   option == 0
                     ? setPoint({ ...point, latitude: event.target.value })
-                    : setLine({ ...line, latitudeStart: event.target.value })
+                    : setLine({ ...line, start:{...line.start,latitude: event.target.value} })
                 }}
                 placeholder="Escribe latitud"
               />
@@ -479,11 +466,11 @@ export const Editor = () => {
             <div className="w-5/12">
               <label>Longitud</label>
               <Input
-                value={option == 0 ? point.longitude : line.longitudeStart}
+                value={option == 0 ? point.longitude : line.start.longitude}
                 onChange={event => {
                   option == 0
                     ? setPoint({ ...point, longitude: event.target.value })
-                    : setLine({ ...line, longitudeStart: event.target.value })
+                    : setLine({ ...line, start:{...line.start,longitude: event.target.value} })
                 }}
                 placeholder="Escribe longitud"
               />
@@ -495,9 +482,9 @@ export const Editor = () => {
                 <label>Latitud</label>
                 <Input
                   type="text"
-                  value={line.latitudeEnd}
+                  value={line.end.latitude}
                   onChange={event => {
-                    setLine({ ...line, latitudeEnd: event.target.value })
+                    setLine({ ...line, end:{...line.end,latitude: event.target.value}})
                   }}
                   placeholder="Escribe latitud"
                 />
@@ -505,9 +492,9 @@ export const Editor = () => {
               <div className="w-5/12">
                 <label>Longitud</label>
                 <Input
-                  value={line.longitudeEnd}
+                  value={line.end.longitude}
                   onChange={event => {
-                    setLine({ ...line, longitudeEnd: event.target.value })
+                    setLine({ ...line, end:{...line.end,longitude: event.target.value}})
                   }}
                   placeholder="Escribe longitud"
                 />
