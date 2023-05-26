@@ -10,6 +10,7 @@ export const PointsLinesProvider = ({ children }) => {
   const [points, setPoints] = useState([])
   const [lines, setLines] = useState([])
   const [pointSelected, setPointSelected] = useState(true)
+  const [messageApi, contextHolder] = message.useMessage()
 
   const getPoints = async () => {
     const res = await http(
@@ -38,6 +39,7 @@ export const PointsLinesProvider = ({ children }) => {
       if (res.msg == 'error') {
         message.success('error')
       } else {
+        message.destroy('savePoint')
         message.success('Punto creado')
         getPoints()
       }
@@ -54,8 +56,9 @@ export const PointsLinesProvider = ({ children }) => {
         point
       )
       if (res.msg == 'error') {
-        message.success('error')
+        message.error('error')
       } else {
+        message.destroy('savePoint')
         message.success('Punto actualizado satisfactoriamente.')
         getPoints()
       }
@@ -73,6 +76,7 @@ export const PointsLinesProvider = ({ children }) => {
       if (res.msg == 'error') {
         message.success('error')
       } else {
+        message.destroy('saveLine')
         message.success('Linea creada')
         getLines()
       }
@@ -91,6 +95,7 @@ export const PointsLinesProvider = ({ children }) => {
       if (res.msg == 'error') {
         message.success('error')
       } else {
+        message.destroy('saveLine')
         message.success('Linea actualizada satisfactoriamente')
         getLines()
       }
@@ -132,7 +137,6 @@ export const PointsLinesProvider = ({ children }) => {
       console.log('catch', error)
     }
   }
-
 
   const pickLine = () => setPointSelected(false)
 

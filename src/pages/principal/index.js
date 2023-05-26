@@ -1,5 +1,5 @@
 import { DownOutlined } from '@ant-design/icons'
-import { Select, Dropdown, Menu, Space } from 'antd'
+import { Select, Dropdown, Menu, Space, message } from 'antd'
 import { Button } from '../../common/Button'
 import { useEffect, useRef } from 'react'
 import { useState } from 'react'
@@ -48,7 +48,7 @@ export const Principal = () => {
 
   const options = vehicles.map(user => {
     return {
-      label: user.username,
+      value: user.username,
       key: user.userid,
     }
   })
@@ -59,7 +59,7 @@ export const Principal = () => {
   const prevRecord = () => {
     if (currentRecord > 0)
       setCurrentRecord(currentRec => {
-        if (currentRec - 1 == 0) clearInterval(interval)
+        if (currentRec - 1 == 0) clearInterval(refInterval.current)
         return currentRec - 1
       })
     if (currentRecord == 0) setCurrentRecord(history.length - 1)
@@ -108,16 +108,21 @@ export const Principal = () => {
               <span className="mr-4 text-sm font-semibold">Usuario</span>
               <Select
                 showSearch
-                placeholder="Seleccione un vehículo"
-                onSelect={(e, user) =>
-                  setFilters({ ...filters, userId: user.key })
+                filterOption={(input, option) =>
+                  (option?.value ?? '')
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
                 }
+                placeholder="Seleccione un vehículo"
+                onSelect={(e, user) => {
+                  setFilters({ ...filters, userId: user.key })
+                }}
                 defaultValue={{ key: filters.userId, value: filters.userName }}
-                className="border border-blue-500 rounded "
+                className="border border-blue-500 rounded w-40"
               >
                 {options.map(option => (
-                  <Option key={option.key} value={option.label}>
-                    {option.label}
+                  <Option key={option.key} value={option.value}>
+                    {option.value}
                   </Option>
                 ))}
               </Select>
@@ -188,7 +193,10 @@ export const Principal = () => {
               <Button
                 type="primary"
                 text="Buscar"
-                onClick={() => getHistory(filters)}
+                onClick={() => {
+                  message.loading({ content: 'Buscando...', key: 'search' }, 0)
+                  getHistory(filters)
+                }}
               />
               <CSVLink
                 separator={';'}
@@ -281,7 +289,11 @@ export const Principal = () => {
           </div>
         )}
         {/* Map */}
-        <div className="bg-blue-500 w-full relative">
+        <div
+          className={`bg-blue-500 relative ${
+            !vehicleSelected ? 'w-full' : 'w-8/12'
+          }`}
+        >
           <MapView
             currentRecord={currentRecord}
             setCurrentRecord={setCurrentRecord}

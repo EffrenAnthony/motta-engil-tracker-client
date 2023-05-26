@@ -6,12 +6,14 @@ import {
   Polyline,
   CircleMarker,
   Tooltip,
+  Popup,
+  useMapEvents,
 } from 'react-leaflet'
 import { CSVLink } from 'react-csv'
 import { Input } from '../../common/Input'
 import { Table } from 'antd'
 import { Button } from '../../common/Button'
-import React, { useRef, useState, useCallback } from 'react'
+import React, { useRef, useState, useCallback, useEffect } from 'react'
 import { useMap } from 'react-leaflet/hooks'
 import { HexColorPicker } from 'react-colorful'
 import useClickOutside from './../../hooks/useClickOutside'
@@ -21,6 +23,27 @@ import ICONSUBIR from '../../assets/images/polygon.svg'
 const { confirm } = Modal
 const { Option } = Select
 const INITIAL_PICKER_COLOR = '#006EB9'
+
+function ClickMarker() {
+  const [position, setPosition] = useState(null)
+  const map = useMapEvents({
+    click(e) {
+      setPosition({
+        lat: parseFloat(e.latlng.lat),
+        lng: parseFloat(e.latlng.lng),
+      })
+    },
+  })
+
+  return position === null ? null : (
+    <Popup position={position}>
+      <span>
+        {`lat: ${position.lat.toFixed(7)}`} <br />{' '}
+        {`lng: ${position.lng.toFixed(7)}`}
+      </span>
+    </Popup>
+  )
+}
 
 const MarkerList = ({ markers }) => {
   return (
@@ -55,7 +78,10 @@ const MarkerList = ({ markers }) => {
 
 const ChangeCenter = ({ center, zoom }) => {
   const map = useMap()
-  map.setView(center, zoom)
+  useEffect(() => {
+    map.setView(center, zoom)
+  }, [center])
+
   return null
 }
 
@@ -116,6 +142,8 @@ export const Editor = () => {
   const [isOpen, toggle] = useState(false)
   const [color, setColor] = useState(INITIAL_PICKER_COLOR)
   const popover = useRef()
+  const [center, setCenter] = useState([-16.400590579, -71.536952998])
+
   const close = useCallback(() => toggle(false), [])
   const deleteRecord = (option, key) => {
     if (option == 0) deletePoint(key)
@@ -246,6 +274,7 @@ export const Editor = () => {
   }
 
   const savePoint = async () => {
+    message.loading({ content: 'Guardando el punto', key: 'savePoint' }, 0)
     if (point.id === undefined) {
       if (point.name != '' && point.latitude != '' && point.longitude != '') {
         await createPoint({
@@ -287,7 +316,8 @@ export const Editor = () => {
   }
 
   const saveLine = async () => {
-    console.log(line, 666)
+    message.loading({ content: 'Guardando la linea', key: 'saveLine' }, 0)
+
     if (line.id === undefined) {
       if (
         line.name != '' &&
@@ -337,19 +367,17 @@ export const Editor = () => {
     }
   }
 
-  let x = -16.400590579
-  let y = -71.536952998
-  if (option == 0 && points[points.length - 1])
-    x = points[points.length - 1].attributes.latitude
+  // if (option == 0 && points[points.length - 1])
+  //   x = points[points.length - 1].attributes.latitude
 
-  if (option == 1 && lines[lines.length - 1])
-    x = lines[lines.length - 1].attributes?.start?.latitude
+  // if (option == 1 && lines[lines.length - 1])
+  //   x = lines[lines.length - 1].attributes?.start?.latitude
 
-  if (option == 0 && points[points.length - 1])
-    y = points[points.length - 1].attributes.longitude
+  // if (option == 0 && points[points.length - 1])
+  //   y = points[points.length - 1].attributes.longitude
 
-  if (option == 1 && lines[lines.length - 1])
-    y = lines[lines.length - 1].attributes?.end?.longitude
+  // if (option == 1 && lines[lines.length - 1])
+  //   y = lines[lines.length - 1].attributes?.end?.longitude
 
   const zoom = 14
 
@@ -525,7 +553,7 @@ export const Editor = () => {
               </div>
             </div>
           )}
-          <div className="flex justify-between px-5 pt-3">
+          <div className="flex justify-around pt-3">
             <div className="w-4/12 mr-5">
               <Button
                 text="Agregar"
@@ -536,9 +564,9 @@ export const Editor = () => {
                 }}
               ></Button>
             </div>
-            <div className="w-4/12 mr-5">
+            {/* <div className="w-4/12 mr-5">
               <Button type="secondary" text="Cargar Excel" />
-            </div>
+            </div> */}
             <div className="w-4/12 ">
               <CSVLink
                 separator={';'}
@@ -621,8 +649,9 @@ export const Editor = () => {
       </div>
       <div className="flex grow relative border-t border-gray-200 w-full">
         <div className="bg-blue-500 w-full">
-          <MapContainer center={[x, y]}>
-            <ChangeCenter center={[x, y]} zoom={zoom} option={option} />
+          <MapContainer center={center}>
+            <ClickMarker />
+            <ChangeCenter center={center} zoom={zoom} option={option} />
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

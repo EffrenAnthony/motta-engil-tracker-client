@@ -1,5 +1,5 @@
 import { useEffect, createRef } from 'react'
-import { MapContainer, TileLayer, CircleMarker } from 'react-leaflet'
+import { MapContainer, TileLayer } from 'react-leaflet'
 import { useMap } from 'react-leaflet/hooks'
 import { useLocations } from '../../context/locationsContext'
 import LocationMarker from './LocationMarker'
@@ -41,8 +41,8 @@ const MarkerList = ({
         }}
         key={marker.userid}
         position={[
-          marker.data.finRetorno.latitude || -16.4054894,
-          marker.data.finRetorno.longitude || -71.5626081,
+          marker.data.finRetorno.latitude,
+          marker.data.finRetorno.longitude,
         ]}
         user={marker?.username}
         color={marker?.color ?? '#00FF00'}
@@ -70,15 +70,14 @@ const MarkerList = ({
   }
 }
 
-const ChangeCenter = ({ center, zoom, vehicleSelected }) => {
+const ChangeCenter = ({ center, zoom }) => {
   const map = useMap()
-  map.setView(
-    [
-      vehicleSelected ? center[0] - 0.03 : center[0],
-      vehicleSelected ? center[1] + 0.005 : center[1],
-    ],
-    zoom
-  )
+  useEffect(() => {
+    map.invalidateSize()
+    map.setView(center, zoom)
+  }, [center])
+
+  return null
 }
 
 function MapView({
@@ -88,8 +87,14 @@ function MapView({
   setCurrentRecord,
   updateFilters,
 }) {
-  const { vehicles, getHistory, history, pickVehicle, vehicleSelected } =
-    useLocations()
+  const {
+    vehicles,
+    getHistory,
+    history,
+    pickVehicle,
+    vehicleSelected,
+    center,
+  } = useLocations()
   const mapRef = createRef()
 
   const clickVehicle = userId => {
@@ -97,24 +102,15 @@ function MapView({
     getHistory(userId)
   }
 
-  const center = [
-    vehicles[vehicles.length - 1]?.data?.finRetorno?.latitude ?? -16.400590579,
-    vehicles[vehicles.length - 1]?.data?.finRetorno?.longitude ?? -71.536952998,
-  ]
-
   const zoom = 14
   return (
     <MapContainer
       ref={mapRef}
       center={center}
       zoom={zoom}
-      scrollWheelZoom={false}
+      scrollWheelZoom={true}
     >
-      <ChangeCenter
-        center={center}
-        zoom={zoom}
-        vehicleSelected={vehicleSelected}
-      />
+      <ChangeCenter center={center} zoom={zoom} />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

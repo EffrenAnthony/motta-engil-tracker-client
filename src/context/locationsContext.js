@@ -12,6 +12,7 @@ export const LocationsProvider = ({ children }) => {
   const [vehicles, setVehicles] = useState([])
   const [history, setHistory] = useState([])
   const [vehicleSelected, setVehicleSelected] = useState(false)
+  const [center, setCenter] = useState([-16.400590579, -71.536952998])
 
   const fillVehiclesLastRecord = data => {
     const obj = {}
@@ -72,11 +73,28 @@ export const LocationsProvider = ({ children }) => {
         'finRetorno',
       ]
       const tmp = order.map(step => ({ ...r.attributes.data[step], step }))
+      message.destroy('search')
       parseFormat = [...parseFormat, ...tmp]
     })
     setHistory(parseFormat)
   }
-  const pickVehicle = () => setVehicleSelected(true)
+  const pickVehicle = () => {
+    setVehicleSelected(true)
+  }
+
+  useEffect(() => {
+    if (vehicles.length)
+      setCenter([
+        vehicles[vehicles.length - 1]?.data?.finRetorno?.latitude,
+        vehicles[vehicles.length - 1]?.data?.finRetorno?.longitude,
+      ])
+  }, [vehicles])
+
+  useEffect(() => {
+    if (history.length > 0) {
+      setCenter([history[0].latitude, history[0].longitude])
+    }
+  }, [history])
 
   return (
     <LocationsContext.Provider
@@ -87,6 +105,7 @@ export const LocationsProvider = ({ children }) => {
         getHistory,
         pickVehicle,
         getVehicles,
+        center,
       }}
     >
       {children}
