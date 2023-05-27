@@ -9,8 +9,7 @@ export const usePointsLines = () => useContext(PointsLinesContext)
 export const PointsLinesProvider = ({ children }) => {
   const [points, setPoints] = useState([])
   const [lines, setLines] = useState([])
-  const [pointSelected, setPointSelected] = useState(true)
-  const [messageApi, contextHolder] = message.useMessage()
+  const [isLoading, setIsLoading] = useState(false)
 
   const getPoints = async () => {
     const res = await http(
@@ -30,6 +29,7 @@ export const PointsLinesProvider = ({ children }) => {
   }
 
   const createPoint = async point => {
+    setIsLoading(true)
     try {
       const res = await http(
         process.env.REACT_APP_BACK_URL + '/points',
@@ -46,9 +46,11 @@ export const PointsLinesProvider = ({ children }) => {
     } catch (e) {
       console.log('catch', error)
     }
+    setIsLoading(false)
   }
 
   const editPoint = async point => {
+    setIsLoading(true)
     try {
       const res = await http(
         process.env.REACT_APP_BACK_URL + '/points/' + point.id,
@@ -65,8 +67,10 @@ export const PointsLinesProvider = ({ children }) => {
     } catch (e) {
       console.log('catch', error)
     }
+    setIsLoading(false)
   }
   const createLine = async line => {
+    setIsLoading(true)
     try {
       const res = await http(
         process.env.REACT_APP_BACK_URL + '/points',
@@ -83,9 +87,11 @@ export const PointsLinesProvider = ({ children }) => {
     } catch (e) {
       console.log('catch', error)
     }
+    setIsLoading(false)
   }
 
   const editLine = async line => {
+    setIsLoading(true)
     try {
       const res = await http(
         process.env.REACT_APP_BACK_URL + '/points/' + line.id,
@@ -102,6 +108,7 @@ export const PointsLinesProvider = ({ children }) => {
     } catch (e) {
       console.log('catch', error)
     }
+    setIsLoading(false)
   }
 
   const deletePoint = async point => {
@@ -138,8 +145,6 @@ export const PointsLinesProvider = ({ children }) => {
     }
   }
 
-  const pickLine = () => setPointSelected(false)
-
   useEffect(() => {
     getPoints()
     getLines()
@@ -155,9 +160,9 @@ export const PointsLinesProvider = ({ children }) => {
         createLine,
         deletePoint,
         deleteLine,
-        pickLine,
         editPoint,
         editLine,
+        isLoading,
       }}
     >
       {children}

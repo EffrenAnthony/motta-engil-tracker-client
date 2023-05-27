@@ -115,6 +115,7 @@ export const Editor = () => {
     createLine,
     editLine,
     deleteLine,
+    isLoading,
   } = usePointsLines()
 
   const [point, setPoint] = useState({
@@ -562,6 +563,7 @@ export const Editor = () => {
                 style={{
                   marginBottom: 16,
                 }}
+                disabled={isLoading}
               ></Button>
             </div>
             {/* <div className="w-4/12 mr-5">

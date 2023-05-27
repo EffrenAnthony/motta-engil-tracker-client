@@ -23,6 +23,7 @@ module.exports = {
       gray: {
         200: '#D6D6D6',
         100: '#F4F4F4',
+        50: '#e3e3e3',
       },
     },
     extend: {

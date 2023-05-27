@@ -200,15 +200,26 @@ export const Principal = () => {
               />
               <CSVLink
                 separator={';'}
-                headers={['FECHA', 'HORA', 'ACCION', 'MATERIAL']}
+                headers={[
+                  'FECHA',
+                  'HORA',
+                  'ACCION',
+                  'MATERIAL',
+                  'TRAMO',
+                  'KM INICIO',
+                ]}
                 filename={'reporte.csv'}
                 className="block text-center bg-yellow-600 text-black hover:text-black w-full px-2 py-1 rounded  relative "
-                data={history.map(record => [
-                  new Date(record.createdAt).toLocaleDateString('en-GB'),
-                  getTime(new Date(record.createdAt)),
-                  record?.data?.topic || '-',
-                  record?.data?.material || '-',
-                ])}
+                data={history.map(record => {
+                  return [
+                    new Date(record.timestamp).toLocaleDateString('en-GB'),
+                    getTime(new Date(record.timestamp)),
+                    STEP_NAMES[record.step] || '-',
+                    record?.MATERIAL || '-',
+                    record?.TRAMO || '-',
+                    record?.KM_START || '-',
+                  ]
+                })}
               >
                 Reporte
               </CSVLink>
@@ -237,22 +248,39 @@ export const Principal = () => {
                         }`}
                         key={pos}
                       >
-                        <td className="">{getTime(time)}</td>
+                        <td className="font-bold">{getTime(time)}</td>
                         <td className="center">
-                          {record.step && `${STEP_NAMES[record.step]}\n`}
+                          <span className="font-bold">
+                            {record.step && `${STEP_NAMES[record.step]}\n`}
+                          </span>
                           {record.START && (
                             <div className="border-t">
-                              {`Inicio: ${record.START}`}
+                              <b className="text-blue-500">Inicio:</b>{' '}
+                              {record.START}
                             </div>
                           )}
                           {record.END && (
                             <div className="border-t">
-                              {`Termino: ${record.END}`}
+                              <b className="text-blue-500">Termino:</b>{' '}
+                              {record.END}
                             </div>
                           )}
                           {record.MATERIAL && (
                             <div className="border-t">
-                              Material: {record.MATERIAL}
+                              <b className="text-blue-500"> Material:</b>{' '}
+                              {record.MATERIAL}
+                            </div>
+                          )}
+                          {record.TRAMO && (
+                            <div className="border-t">
+                              <b className="text-blue-500">Tramo: </b>
+                              {record.TRAMO}
+                            </div>
+                          )}
+                          {record.KM_START && (
+                            <div className="border-t">
+                              <b className="text-blue-500">KM Inicio:</b>{' '}
+                              {record.KM_START}
                             </div>
                           )}
                         </td>
